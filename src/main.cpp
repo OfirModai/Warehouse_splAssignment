@@ -11,6 +11,7 @@ int main(int argc, char** argv){
         return 0;
     }
     string configurationFile = argv[1];
+    std::cout << "ofir" << std::endl;
     std::cout << "chovav!" << std::endl;
 
     WareHouse wareHouse(configurationFile);
