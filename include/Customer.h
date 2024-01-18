@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <stdexcept>
 using std::string;
 using std::vector;
 
@@ -10,7 +11,6 @@ class Order;
 
 class Customer {
     public:
-        Customer(int id, const string &name, int locationDistance, int maxOrders);
         Customer(int id, const std::string &name, int locationDistance, int maxOrders)
         : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders) {}
         const string &getName() const;
@@ -19,7 +19,7 @@ class Customer {
         int getMaxOrders() const; //Returns maxOrders
         int getNumOrders() const; //Returns num of orders the customer has made so far
         bool canMakeOrder() const; //Returns true if the customer didn't reach max orders
-        vector<int> &getOrders() const;
+        vector<int> &getOrdersId() const;
         int addOrder(int orderId); //return OrderId if order was added successfully, -1 otherwise
 
         virtual Customer *clone() const = 0; // Return a copy of the customer
@@ -33,6 +33,17 @@ class Customer {
             // I infer it't relate to how many orders could be at once - maybe would change later
             return maxOrders > ordersId.size();
         };
+        int addOrder(int orderId){
+            if(canMakeOrder()) ordersId.push_back(orderId);
+            else throw std::runtime_error("too many orders");
+        }
+
+        vector<int> &getOrdersId() const{
+            static vector<int> ref_ordersId = ordersId;
+            return ref_ordersId;
+        }
+
+        virtual string getType()=0;
     private:
         const int id;
         const string name;
@@ -44,9 +55,12 @@ class Customer {
 
 class SoldierCustomer: public Customer {
     public:
-        SoldierCustomer(int id, string name, int locationDistance, int maxOrders);
-        SoldierCustomer *clone() const override;
-    
+        SoldierCustomer(int id, string name, int locationDistance, int maxOrders)
+        :Customer(id, name, locationDistance, maxOrders){}
+        SoldierCustomer *clone() const override; // to figure out later
+        string getType() override{
+            return "Soldier";
+        }
     private:
         
 };
@@ -54,8 +68,10 @@ class SoldierCustomer: public Customer {
 class CivilianCustomer: public Customer {
     public:
         CivilianCustomer(int id, string name, int locationDistance, int maxOrders);
-        CivilianCustomer *clone() const override;
-    
+        CivilianCustomer *clone() const override; // to figure out later
+        string getType() override{
+            return "Civilian";
+        }
     private:
         
 };
