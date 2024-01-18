@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "Order.h"
+#include <stdexcept>
 using std::string;
 using std::vector;
 
@@ -12,6 +13,8 @@ class Volunteer {
         Volunteer(int id, const string& name);
         int getId() const;
         const string &getName() const;
+        void resetActiveOrderId();
+        void resetCompletedOrderId();
         int getActiveOrderId() const;
         int getCompletedOrderId() const;
         bool isBusy() const; // Signal whether the volunteer is currently processing an order    
@@ -33,6 +36,14 @@ class Volunteer {
         int getActiveOrderId() const{ return activeOrderId; }
         int getCompletedOrderId() const{ return completedOrderId; }
         bool isBusy() const{ return getActiveOrderId()!= NO_ORDER; }
+        virtual string toString() const{
+            std::string res = "VolunteerId: " + std::to_string(getId()) +
+                        "\n IsBusy: " + std::to_string(isBusy());
+            if(isBusy()){
+                res += "\n OrderId: " + std::to_string(getActiveOrderId());
+            }
+            return res;
+        }
 
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet
@@ -55,7 +66,8 @@ class CollectorVolunteer: public Volunteer {
         void step() override;
         int getCoolDown() const;
         int getTimeLeft() const;
-        bool decreaseCoolDown();//Decrease timeLeft by 1,return true if timeLeft=0,false otherwise
+        bool decreaseTimeLeft();//Decrease timeLeft by 1,return true if timeLeft=0,false otherwise
+        // we changed the signature 
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
@@ -64,11 +76,32 @@ class CollectorVolunteer: public Volunteer {
         CollectorVolunteer(int id, string name, int coolDown)
         :Volunteer(id,name), coolDown(coolDown), timeLeft(0){}
         void step(){
+            if(decreaseTimeLeft){
+                completedOrderId = activeOrderId;
+                activeOrderId = NO_ORDER;
+            }
+        }
+        int getCoolDown() const{return coolDown;};
+        int getTimeLeft() const{return timeLeft;};
+        bool decreaseTimeLeft(){
+            if(timeLeft<=0) throw std::runtime_error("already finished work");
             timeLeft--;
-            if(timeLeft==0) 
+            return timeLeft==0;
         }
         bool hasOrdersLeft() const override{ return true; }
         bool canTakeOrder(const Order &order) const override{ return activeOrderId==NO_ORDER; }
+        void acceptOrder(const Order &order) override{
+            if(activeOrderId!=NO_ORDER) throw std::runtime_error("already finished work");
+            activeOrderId = order.getId();
+            timeLeft = coolDown;
+        }
+        string toString() const override{
+            std::string res = Volunteer::toString();
+            if(isBusy()){
+                res += "\n timeLeft: " + std::to_string(getTimeLeft());
+            }
+            return res;
+        }
     private:
         const int coolDown; // The time it takes the volunteer to process an order
         int timeLeft; // Time left until the volunteer finishes his current order
