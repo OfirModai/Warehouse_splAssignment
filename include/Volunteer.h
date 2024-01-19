@@ -66,7 +66,7 @@ class CollectorVolunteer: public Volunteer {
         void step() override;
         int getCoolDown() const;
         int getTimeLeft() const;
-        bool decreaseTimeLeft();//Decrease timeLeft by 1,return true if timeLeft=0,false otherwise
+        bool decreaseCoolDown();//Decrease timeLeft by 1,return true if timeLeft=0,false otherwise
         // we changed the signature 
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override;
@@ -76,14 +76,14 @@ class CollectorVolunteer: public Volunteer {
         CollectorVolunteer(int id, string name, int coolDown)
         :Volunteer(id,name), coolDown(coolDown), timeLeft(0){}
         void step(){
-            if(decreaseTimeLeft){
+            if(decreaseCoolDown){
                 completedOrderId = activeOrderId;
                 activeOrderId = NO_ORDER;
             }
         }
         int getCoolDown() const{return coolDown;};
         int getTimeLeft() const{return timeLeft;};
-        bool decreaseTimeLeft(){
+        bool decreaseCoolDown(){
             if(timeLeft<=0) throw std::runtime_error("already finished work");
             timeLeft--;
             return timeLeft==0;
