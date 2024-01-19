@@ -34,6 +34,12 @@ class Order {
             status = orderStatus;
         }
 
+        void advanceStatus(){ 
+            int i = (int)status;
+            i++;
+            status = (OrderStatus)i;
+        }
+
         void setCollectorId(int orderCollectorId) {
             collectorId = orderCollectorId;
         }

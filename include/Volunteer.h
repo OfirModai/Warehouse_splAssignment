@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "Order.h"
+#include <stdexcept>
 using std::string;
 using std::vector;
 
@@ -9,9 +10,11 @@ using std::vector;
 
 class Volunteer {
     public:
-        Volunteer(int id, const string &name);
+        Volunteer(int id, const string& name);
         int getId() const;
         const string &getName() const;
+        void resetActiveOrderId();
+        void resetCompletedOrderId();
         int getActiveOrderId() const;
         int getCompletedOrderId() const;
         bool isBusy() const; // Signal whether the volunteer is currently processing an order    
@@ -23,9 +26,30 @@ class Volunteer {
         virtual string toString() const = 0;
         virtual Volunteer* clone() const = 0; //Return a copy of the volunteer
 
+        Volunteer(int id, const string& name)
+        : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
+        int getId() const{ return id; };
+        const string &getName() const{ 
+            const string &ref_name = name;
+            return ref_name;
+        }; // is it the same as to just return name?
+        int getActiveOrderId() const{ return activeOrderId; }
+        int getCompletedOrderId() const{ return completedOrderId; }
+        bool isBusy() const{ return getActiveOrderId()!= NO_ORDER; }
+        virtual string toString() const{
+            std::string res = "VolunteerId: " + std::to_string(getId()) +
+                        "\n IsBusy: " + std::to_string(isBusy());
+            if(isBusy()){
+                res += "\n OrderId: " + std::to_string(getActiveOrderId());
+            }
+            return res;
+        }
+
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet
         int activeOrderId; //Initialized to NO_ORDER if no order is being processed
+        void resetActiveOrderId() {activeOrderId = NO_ORDER;}
+        void resetCompletedOrderId() {completedOrderId = NO_ORDER;}
     
     private:
         const int id;
@@ -43,11 +67,41 @@ class CollectorVolunteer: public Volunteer {
         int getCoolDown() const;
         int getTimeLeft() const;
         bool decreaseCoolDown();//Decrease timeLeft by 1,return true if timeLeft=0,false otherwise
+        // we changed the signature 
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
         string toString() const override;
-    
+
+        CollectorVolunteer(int id, string name, int coolDown)
+        :Volunteer(id,name), coolDown(coolDown), timeLeft(0){}
+        void step(){
+            if(decreaseCoolDown){
+                completedOrderId = activeOrderId;
+                activeOrderId = NO_ORDER;
+            }
+        }
+        int getCoolDown() const{return coolDown;};
+        int getTimeLeft() const{return timeLeft;};
+        bool decreaseCoolDown(){
+            if(timeLeft<=0) throw std::runtime_error("already finished work");
+            timeLeft--;
+            return timeLeft==0;
+        }
+        bool hasOrdersLeft() const override{ return true; }
+        bool canTakeOrder(const Order &order) const override{ return activeOrderId==NO_ORDER; }
+        void acceptOrder(const Order &order) override{
+            if(activeOrderId!=NO_ORDER) throw std::runtime_error("already finished work");
+            activeOrderId = order.getId();
+            timeLeft = coolDown;
+        }
+        string toString() const override{
+            std::string res = Volunteer::toString();
+            if(isBusy()){
+                res += "\n timeLeft: " + std::to_string(getTimeLeft());
+            }
+            return res;
+        }
     private:
         const int coolDown; // The time it takes the volunteer to process an order
         int timeLeft; // Time left until the volunteer finishes his current order
@@ -65,6 +119,9 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
         int getMaxOrders() const;
         int getNumOrdersLeft() const;
         string toString() const override;
+
+        bool hasOrdersLeft() const override{ ordersLeft > 0; }
+        bool canTakeOrder(const Order &order) const override{ return activeOrderId==NO_ORDER & hasOrdersLeft(); }
     
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation
@@ -87,6 +144,9 @@ class DriverVolunteer: public Volunteer {
         void step() override; // Decrease distanceLeft by distancePerStep
         string toString() const override;
 
+        bool hasOrdersLeft() const override{ return true; }
+        bool canTakeOrder(const Order &order) const override{ return activeOrderId==NO_ORDER; }
+
     private:
         const int maxDistance; // The maximum distance of ANY order the volunteer can take
         const int distancePerStep; // The distance the volunteer does in one step
@@ -105,6 +165,8 @@ class LimitedDriverVolunteer: public DriverVolunteer {
         void acceptOrder(const Order &order) override; // Reset distanceLeft to maxDistance and decrease ordersLeft
         string toString() const override;
 
+        bool hasOrdersLeft() const override{ ordersLeft > 0; }
+        bool canTakeOrder(const Order &order) const override{ return activeOrderId==NO_ORDER & hasOrdersLeft(); }
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation
         int ordersLeft; // The number of orders the volunteer can still take

@@ -17,10 +17,10 @@ class WareHouse {
     public:
         WareHouse(const string &configFilePath);
         void start();
-        const vector<BaseAction*> &getActionsLog() const;
         void addOrder(Order* order);
         void addAction(BaseAction* action);
-        void printActionsLogs();
+        const vector<BaseAction*> &getActions() const;
+        // void addCustomer()
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
         Order &getOrder(int orderId) const;
