@@ -26,39 +26,27 @@ class Order {
             return id;
         }
 
-        int getCustomerId() const {
-            return customerId;
-        }
+        int getCustomerId() const {return customerId;}
 
-        void setStatus(OrderStatus orderStatus) {
-            status = orderStatus;
-        }
+        void setStatus(OrderStatus orderStatus) {status = orderStatus;}
 
         void advanceStatus(){ 
             int i = (int)status;
             i++;
-            status = (OrderStatus)i;
+            status = (OrderStatus) i;
         }
 
-        void setCollectorId(int orderCollectorId) {
-            collectorId = orderCollectorId;
-        }
+        void setCollectorId(int orderCollectorId) {collectorId = orderCollectorId;}
 
-        void setDriverId(int orderDriverId) {
-            driverId = orderDriverId;
-        }
+        void setDriverId(int orderDriverId) {driverId = orderDriverId;}
 
-        int getCollectorId() const {
-            return collectorId;
-        }
+        int getCollectorId() const {return collectorId;}
 
-        int getDriverId() const {
-            return driverId;
-        }
+        int getDriverId() const {return driverId;}
 
-        OrderStatus getStatus() const {
-            return status;
-        }
+        int getDistance() const {return distance;}
+
+        OrderStatus getStatus() const {return status;}
 
         // Function to convert Order information to string
         const std::string toString() const {
