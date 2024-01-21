@@ -61,6 +61,10 @@ class Order {
             return result;
         }
 
+        Order* clone(){
+            return &*this;
+        }
+
     private:
         const int id;
         const int customerId;
