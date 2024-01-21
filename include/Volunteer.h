@@ -36,13 +36,6 @@ class Volunteer {
         int getActiveOrderId() const{ return activeOrderId; }
         int getCompletedOrderId() const{ return completedOrderId; }
         bool isBusy() const{ return getActiveOrderId()!= NO_ORDER; }
-        virtual string toString() const{
-            std::string res = "VolunteerId: " + std::to_string(getId()) +
-                        "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: ";
-            if(isBusy()){ res += std::to_string(getActiveOrderId()); }
-            else{ res += "None" ;}
-            return res;
-        }
         
 
     protected:
@@ -76,10 +69,7 @@ class CollectorVolunteer: public Volunteer {
         CollectorVolunteer(int id, string name, int coolDown)
         :Volunteer(id,name), coolDown(coolDown), timeLeft(0){}
 
-        CollectorVolunteer *clone() const override{
-
-        }
-
+        CollectorVolunteer *clone() const override { return new CollectorVolunteer(getId(), getName(), coolDown); }
 
         void step(){
             if(decreaseCoolDown){
@@ -102,8 +92,10 @@ class CollectorVolunteer: public Volunteer {
             timeLeft = coolDown;
         }
         string toString() const override{
-            std::string res = Volunteer::toString();
-            if(isBusy()){ res += "\n timeLeft: "; }
+            std::string res = "VolunteerId: " + std::to_string(getId()) 
+            + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: " ;
+            if(!isBusy()) { res += "None" ; }
+            else { res += std::to_string(getActiveOrderId()) + "\n timeLeft: "; }
             if (timeLeft != 0) { res += std::to_string(getTimeLeft()) ; }
             else { res += "None" ; }
             res += "\n ordersLeft: No Limit";
@@ -130,7 +122,7 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
         LimitedCollectorVolunteer(int id, string name, int coolDown ,int maxOrders)
         :CollectorVolunteer (id, name, coolDown), maxOrders(maxOrders){}
         LimitedCollectorVolunteer *clone() const override{
-
+            return new LimitedCollectorVolunteer (getId(), getName(), getCoolDown(), maxOrders) ;
         }
         bool hasOrdersLeft() const override{ return ordersLeft > 0; }
         bool canTakeOrder(const Order &order) const override{ return activeOrderId==NO_ORDER & hasOrdersLeft(); }
@@ -142,9 +134,11 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
         int getMaxOrders() const{ return maxOrders; }
         int getNumOrdersLeft() const{ return ordersLeft; }
         string toString() const override{
-            std::string res = Volunteer::toString();
-            if(isBusy()){ res += "\n timeLeft: "; }
-            if (getTimeLeft != 0) { res += std::to_string(getTimeLeft()) ; }
+            std::string res = "VolunteerId: " + std::to_string(getId()) 
+            + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: " ;
+            if(!isBusy()) { res += "None" ; }
+            else { res += std::to_string(getActiveOrderId()) + "\n timeLeft: "; }
+            if (getTimeLeft() != 0) { res += std::to_string(getTimeLeft()) ; }
             else { res += "None" ; }
             res += "\n ordersLeft: " + ordersLeft;
             return res;
@@ -178,7 +172,7 @@ class DriverVolunteer: public Volunteer {
         DriverVolunteer(int id, string name, int maxDistance, int distancePerStep)
         :Volunteer(id,name), maxDistance(maxDistance), distancePerStep(distancePerStep), distanceLeft(0){}
         DriverVolunteer *clone() const override{
-
+            return new DriverVolunteer (getId(), getName(), maxDistance, distancePerStep) ;
         }
         int getDistanceLeft() const { return distanceLeft; }
         int getMaxDistance() const { return maxDistance; }
@@ -203,9 +197,11 @@ class DriverVolunteer: public Volunteer {
             if (distanceLeft < 0) distanceLeft = 0;
         }
         string toString() const override{
-            std::string res = Volunteer::toString();
-            if(isBusy()){ res += "\n timeLeft: "; }
-            if (distanceLeft != 0) { res += std::to_string(getDistanceLeft()) ; }
+            std::string res = "VolunteerId: " + std::to_string(getId()) 
+            + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: " ;
+            if(!isBusy()) { res += "None" ; }
+            else { res += std::to_string(getActiveOrderId()) + "\n timeLeft: "; }
+            if (distanceLeft != 0) { res += std::to_string(distanceLeft) ; }
             else { res += "None" ; }
             res += "\n ordersLeft: No Limit";
             return res;
@@ -235,7 +231,7 @@ class LimitedDriverVolunteer: public DriverVolunteer {
         LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders)
         :DriverVolunteer (id, name, maxDistance, distancePerStep), maxOrders(maxOrders){}
         LimitedDriverVolunteer *clone() const override{
-
+            return new LimitedDriverVolunteer (getId(), getName(), getMaxDistance(), getDistanceLeft(), maxOrders) ;
         }
         int getMaxOrders() const { return maxOrders; }
         int getNumOrdersLeft() const { return ordersLeft; }
@@ -249,14 +245,21 @@ class LimitedDriverVolunteer: public DriverVolunteer {
             ordersLeft--;
         }
         string toString() const override{
-            std::string res = Volunteer::toString();
-            if(isBusy()){ res += "\n distanceLeft: "; }
+            // std::string res = Volunteer::toString();
+            // if(isBusy()){ res += "\n distanceLeft: "; }
+            // if (getDistanceLeft() != 0) { res += std::to_string(getDistanceLeft()) ; }
+            // else { res += "None" ; }
+            // res += "\n ordersLeft: " + ordersLeft;
+            // return res;
+            std::string res = "VolunteerId: " + std::to_string(getId()) 
+            + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: " ;
+            if(!isBusy()) { res += "None" ; }
+            else { res += std::to_string(getActiveOrderId()) + "\n timeLeft: "; }
             if (getDistanceLeft() != 0) { res += std::to_string(getDistanceLeft()) ; }
             else { res += "None" ; }
             res += "\n ordersLeft: " + ordersLeft;
             return res;
         }
-
 
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation
