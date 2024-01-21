@@ -20,19 +20,9 @@ class WareHouse {
 
     public:
         WareHouse(const string &configFilePath);
-        WareHouse(const WareHouse& other)
-        :isOpen(other.isOpen), customerCounter(other.customerCounter),
-         volunteerCounter(other.volunteerCounter){
-            assignVectors(other);
-        }
-        WareHouse& operator=(const WareHouse& other){
-            isOpen = other.isOpen;
-            customerCounter = other.customerCounter;
-            volunteerCounter = volunteerCounter;
-            deleteVectors();
-            assignVectors(other);
-        }
-        ~WareHouse(){deleteVectors();}
+        WareHouse(const WareHouse& other);
+        WareHouse& operator=(const WareHouse& other);
+        ~WareHouse();
         void start();
         void addOrder(Order* order);
         void addAction(BaseAction* action);
@@ -41,10 +31,9 @@ class WareHouse {
         Volunteer &getVolunteer(int volunteerId) const;
         Order &getOrder(int orderId) const;
         void close();
-        void open(){isOpen=true;};
-
+        void open();
         WareHouse(const string& configFilePath)
-        : isOpen(true), customerCounter(0), volunteerCounter(0)
+        : isOpen(true), customerCounter(0), volunteerCounter(0), orderCounter(0)
         {
             istringstream iss(configFilePath); // this is a class which let me seperate the string
             string word;
@@ -106,7 +95,20 @@ class WareHouse {
                 }
             }
         }
-        
+        WareHouse(const WareHouse& other)
+        :isOpen(other.isOpen), customerCounter(other.customerCounter),
+         volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter){
+            assignVectors(other);
+        }
+        WareHouse& operator=(const WareHouse& other){
+            isOpen = other.isOpen;
+            customerCounter = other.customerCounter;
+            volunteerCounter = other.volunteerCounter;
+            orderCounter = other.orderCounter;
+            deleteVectors();
+            assignVectors(other);
+        }
+        ~WareHouse(){deleteVectors();}
         void start() {isOpen=true;}
         void addOrder(Order* order){ //we got pointer, we are responsible to delete this object
             pendingOrders.push_back(order);
@@ -135,7 +137,21 @@ class WareHouse {
             }
             throw runtime_error("no such order");
         }
+        void close(){delete this;}
+        void open(){isOpen=true;};
 
+        string addOrder(int customerId){
+            int i;
+            for(i = 0;i < customers.size();i++){
+                if(customers[i]->getId() == customerId) break;
+            }
+            if(i==customers.size() || !customers[i]->canMakeOrder()){
+                actionsLog.push_back()
+                return false;
+            } 
+            addOrder(new Order(orderCounter,customerId, customers[i]->getCustomerDistance()));
+            actionsLog.push_back();
+        }
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
@@ -146,6 +162,7 @@ class WareHouse {
         vector<Customer*> customers;
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs
+        int orderCounter;
         void deleteVectors(){
             while (actionsLog.size() > 0)
             {

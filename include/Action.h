@@ -24,6 +24,9 @@ class BaseAction{
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
 
+        ActionStatus getStatus() const{ return status;}
+        BaseAction(){}
+
     protected:
         void complete();
         void error(string errorMsg);
@@ -52,6 +55,11 @@ class AddOrder : public BaseAction {
         void act(WareHouse &wareHouse) override;
         AddOrder *clone() const override;
         string toString() const override;
+
+        AddOrder(int id): customerId(id) {}
+        void act(WareHouse &wareHouse) override{
+            wareHouse.addOrder(customerId);
+        }
     private:
         const int customerId;
 };
