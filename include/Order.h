@@ -62,7 +62,7 @@ class Order {
         }
 
         Order* clone(){
-            return &*this;
+            return new Order(*this);
         }
 
     private:

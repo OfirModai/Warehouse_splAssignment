@@ -101,12 +101,14 @@ class WareHouse {
             assignVectors(other);
         }
         WareHouse& operator=(const WareHouse& other){
+            if(&other==this) return *this;
             isOpen = other.isOpen;
             customerCounter = other.customerCounter;
             volunteerCounter = other.volunteerCounter;
             orderCounter = other.orderCounter;
             deleteVectors();
             assignVectors(other);
+            return *this;
         }
         ~WareHouse(){deleteVectors();}
         void start() {isOpen=true;}
