@@ -58,7 +58,6 @@ class AddOrder : public BaseAction {
         const int customerId;
 };
 
-
 class AddCustomer : public BaseAction {
     public:
         AddCustomer(string customerName, string customerType, int distance, int maxOrders);
