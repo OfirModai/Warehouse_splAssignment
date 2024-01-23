@@ -7,6 +7,7 @@ using namespace std;
 #include "Customer.h"
 #include "Volunteer.h"
 
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -23,9 +24,11 @@ class WareHouse {
         WareHouse(const WareHouse& other);
         WareHouse& operator=(const WareHouse& other);
         ~WareHouse();
-        void start();
+        void start(); // infinite loop which get inputs from the user
         void addOrder(Order* order);
+        string addOrder(int customerId);
         void addAction(BaseAction* action);
+        void addCustomer(const string& customerName, CustomerType customerType,int distance,int maxOrders);
         const vector<BaseAction*> &getActions() const;
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
@@ -35,65 +38,53 @@ class WareHouse {
         WareHouse(const string& configFilePath)
         : isOpen(true), customerCounter(0), volunteerCounter(0), orderCounter(0)
         {
-            istringstream iss(configFilePath); // this is a class which let me seperate the string
-            string word;
-            vector<vector<string>> lines;
-            vector<string> curLine = {};
-            while (iss >> word) {
-                if (word == "\n"){
-                    lines.push_back(curLine);
-                    curLine = {};
-                }
-                else{
-                    curLine.push_back(word);
-                }
+            // Open the text file
+            std::ifstream inputFile(configFilePath);
+            // Check if the file is open
+            if (!inputFile.is_open()) {
+                std::cerr << "Error opening file." << std::endl;
+                throw runtime_error("can't open file");  // Return an error code
             }
-            if (!curLine.empty())
-            {
-                lines.push_back(curLine);
-            }
-            string state = "customer";
-            for(int i = 0;i < lines.size(); i++){
-                if(lines[i][0] != state) state = lines[i][0];
-                if(state == "customer"){
-                    if(lines[i][2] == "soldier"){
-                        customers.push_back(
-                            new SoldierCustomer(customerCounter,lines[i][1],
-                             std::stoi(lines[i][3]), std::stoi(lines[i][4])));
-                    }
-                    else{
-                        customers.push_back(
-                            new CivilianCustomer(customerCounter,lines[i][1],
-                             std::stoi(lines[i][3]), std::stoi(lines[i][4])));
-                    }
+            std::string line;
+            // Read each line from the file
+            while (std::getline(inputFile, line)) {
+                // Use a stringstream to parse the line
+                std::istringstream iss(line);
+                
+                // Variables to store parsed values
+                std::string type, name, advanced_type;
+                int n1,n2,n3;
+
+                // Parse the line using the stringstream
+                if (iss >> type >> name >> advanced_type >> n1 >> n2 >> n3) {
+                    // this is a limited driver
+                    volunteers.push_back(new LimitedDriverVolunteer(volunteerCounter, name, n1, n2, n3));
                     customerCounter++;
                 }
-                else{
-                    // lines of volunteer
-                    if(lines[i][2] == "collector"){
-                        if(lines[i].size()==4){ // no limit given
-                            volunteers.push_back(
-                                new CollectorVolunteer(volunteerCounter, lines[i][1],
-                                    std::stoi(lines[i][3])));
-                        }
-                        else volunteers.push_back(
-                            new LimitedCollectorVolunteer(volunteerCounter, lines[i][1],
-                                std::stoi(lines[i][3]), std::stoi(lines[i][4]))
-                        );
+                else if(iss >> type >> name >> advanced_type >> n1 >> n2){
+                    //can be customer or driver or limited collector
+                    if(type=="customer"){
+                         if(advanced_type=="soldier") customers.push_back(new SoldierCustomer(customerCounter, name, n1, n2));
+                         else customers.push_back(new CivilianCustomer(customerCounter, name, n1, n2));
+                         customerCounter++;
                     }
-                    else{
-                        if(lines[i].size()==5){ // no limit given
-                            volunteers.push_back(
-                                new DriverVolunteer(volunteerCounter, lines[i][1],
-                                    std::stoi(lines[i][3]), std::stoi(lines[i][4])));
-                        }
-                        else volunteers.push_back(
-                            new LimitedDriverVolunteer(volunteerCounter, lines[i][1],
-                                std::stoi(lines[i][3]), std::stoi(lines[i][4]),std::stoi(lines[i][5])));
+                    else if(type=="driver"){
+                        volunteers.push_back(new DriverVolunteer(volunteerCounter, name, n1, n2));
+                        volunteerCounter++;
                     }
+                    else {
+                        volunteers.push_back(new LimitedCollectorVolunteer(volunteerCounter, name, n1, n2));
+                        volunteerCounter++;
+                    }
+                }
+                else if(iss >> type >> name >> advanced_type >> n1){
+                    //this is a collector
+                    volunteers.push_back(new CollectorVolunteer(volunteerCounter, name, n1));
                     volunteerCounter++;
                 }
             }
+            // Close the file
+            inputFile.close();
         }
         WareHouse(const WareHouse& other)
         :isOpen(other.isOpen), customerCounter(other.customerCounter),
@@ -148,15 +139,93 @@ class WareHouse {
                 if(customers[i]->getId() == customerId) break;
             }
             if(i==customers.size() || !customers[i]->canMakeOrder()){
-                actionsLog.push_back()
-                return false;
+                string message = "Wrong customer ID";
+                if(i!=customers.size()) message = "Cannot place this order";
+                return message;
             } 
             addOrder(new Order(orderCounter,customerId, customers[i]->getCustomerDistance()));
-            actionsLog.push_back();
+            return "";
+        }
+        void addAction(BaseAction* action){actionsLog.push_back(action);}
+        void addCustomer(const string& customerName, CustomerType customerType,int distance,int maxOrders){
+            if(customerType==CustomerType::Civilian) customers.push_back(
+                new CivilianCustomer(customerCounter, customerName, distance, maxOrders)
+            );
+            else customers.push_back(
+                new SoldierCustomer(customerCounter, customerName, distance, maxOrders)
+            );
+        }
+        void SimulateStep(){
+            // stage 1
+            for (int i = 0; i < pendingOrders.size(); i++){
+                Order* order_i = pendingOrders[i];
+                for (Volunteer* volunteer : volunteers)
+                {
+                    if(volunteer->canTakeOrder(*order_i)){
+                        volunteer->acceptOrder(*order_i);
+                        OrderStatus status = order_i->getStatus();
+                        if(status==OrderStatus::PENDING) order_i->setCollectorId(volunteer->getId());
+                        else order_i->setDriverId(volunteer->getId());
+                        order_i->advanceStatus();
+                        inProcessOrders.push_back(order_i);
+                        pendingOrders.erase(pendingOrders.begin() + i);
+                        i--;
+                    }
+                }
+            }
+            //stage 2
+            for(int i = 0; i < volunteers.size(); i++){
+                volunteers[i]->step();
+            }
+
+            // stage 3
+            for(Volunteer* volunteer : volunteers){
+                int id = volunteer->getCompletedOrderId();
+                if(id!=NO_ORDER){
+                    for (int i = 0;i<inProcessOrders.size();i++)
+                    {
+                        if(id==inProcessOrders[i]->getId()){
+                            if(volunteer->isCollector()) pendingOrders.push_back(inProcessOrders[i]);
+                            else completedOrders.push_back(inProcessOrders[i]);
+                            inProcessOrders.erase(inProcessOrders.begin() + i);
+                            i--;
+                        }
+                    }
+                }
+            }
+            
+            // stage 4
+            for(int i = 0; i < volunteers.size(); i++){
+                if(!volunteers[i]->hasOrdersLeft()&volunteers[i]->getActiveOrderId()==NO_ORDER){
+                    volunteers.erase(volunteers.begin()+i);
+                    i--;
+                }
+            }
+        }
+        string getOrderStatus(int id){
+            string res = "OrderId: " + std::to_string(id) + "\n";
+            bool find = false;
+            for (Order* order : pendingOrders, inProcessOrders, completedOrders){
+                if(order->getId()==id) {
+                    string annoying = "Pending";
+                    if(order->getStatus()==OrderStatus::DELIVERING) annoying = "Delivering";
+                    else if(order->getStatus()==OrderStatus::COMPLETED) annoying = "Completed";
+                    else if(order->getStatus()==OrderStatus::COLLECTING) annoying = "Collecting";
+                    res += "OrderStatus: " + annoying+"\n";
+                    find = true;
+                    res += "CustomerID: " + std::to_string(order->getCustomerId()) + "\n" + "Collector: ";
+                    if(order->getCollectorId()!=NO_ORDER) res += order->getCollectorId();
+                    else res += "None";
+                    res += "Driver: ";
+                    if(order->getDriverId()!=NO_ORDER) res += order->getDriverId();
+                    else res += "None";
+                    break;
+                }
+            }
+            if(!find) return "Order doesn't exist";
         }
     private:
         bool isOpen;
-        //fdgsdfg
         vector<BaseAction*> actionsLog;
         vector<Volunteer*> volunteers;
         vector<Order*> pendingOrders;

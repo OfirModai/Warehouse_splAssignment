@@ -30,9 +30,10 @@ class Order {
 
         void setStatus(OrderStatus orderStatus) {status = orderStatus;}
 
-        void advanceStatus(){ 
+        void advanceStatus(){
             int i = (int)status;
             i++;
+            if(i==4) i=3;
             status = (OrderStatus) i;
         }
 

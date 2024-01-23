@@ -30,7 +30,6 @@ class Customer {
         int getMaxOrders() const {return maxOrders;};
         int getNumOrders() const {return ordersId.size();};
         bool canMakeOrder() const {
-            // I infer it't relate to how many orders could be at once - maybe would change later
             return maxOrders > ordersId.size();
         };
         int addOrder(int orderId){
@@ -42,6 +41,8 @@ class Customer {
             static vector<int> ref_ordersId = ordersId;
             return ref_ordersId;
         }
+
+        
 
         virtual string getType()=0;
     private:
@@ -57,10 +58,15 @@ class SoldierCustomer: public Customer {
     public:
         SoldierCustomer(int id, string name, int locationDistance, int maxOrders)
         :Customer(id, name, locationDistance, maxOrders){}
-        SoldierCustomer *clone() const override; // to figure out later
+        SoldierCustomer *clone() const override; 
         string getType() override{
             return "Soldier";
         }
+
+        SoldierCustomer* clone() const override{
+            return new SoldierCustomer(*this);
+        }
+        
     private:
         
 };
@@ -68,9 +74,14 @@ class SoldierCustomer: public Customer {
 class CivilianCustomer: public Customer {
     public:
         CivilianCustomer(int id, string name, int locationDistance, int maxOrders);
-        CivilianCustomer *clone() const override; // to figure out later
+        CivilianCustomer *clone() const override; 
         string getType() override{
             return "Civilian";
+        }
+        CivilianCustomer(int id, string name, int locationDistance, int maxOrders)
+        : Customer(id,name,locationDistance, maxOrders){}
+        CivilianCustomer *clone() const override{
+            return new CivilianCustomer(*this);
         }
     private:
         
