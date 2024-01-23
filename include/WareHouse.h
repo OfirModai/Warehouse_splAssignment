@@ -156,6 +156,7 @@ class WareHouse {
         }
     private:
         bool isOpen;
+        //fdgsdfg
         vector<BaseAction*> actionsLog;
         vector<Volunteer*> volunteers;
         vector<Order*> pendingOrders;
