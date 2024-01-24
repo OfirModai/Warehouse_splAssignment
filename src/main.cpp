@@ -3,7 +3,7 @@
 
 using namespace std;
 
-WareHouse* backup = nullptr;
+extern WareHouse* backup = nullptr;
 
 int main(int argc, char** argv){
     if(argc!=2){
@@ -17,5 +17,6 @@ int main(int argc, char** argv){
     	delete backup;
     	backup = nullptr;
     }
+    if(backup!=nullptr) delete backup;
     return 0;
 }

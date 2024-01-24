@@ -161,7 +161,12 @@ public:
         }
         throw runtime_error("no such order");
     }
-    void close() { delete this; }
+    void close() {
+        for(Order* order : pendingOrders, inProcessOrders, completedOrders){
+            cout<< order->toString() << std::endl;
+        } 
+        delete this;
+    }
     void open() { isOpen = true; };
 
     string addOrder(int customerId)
@@ -258,29 +263,7 @@ public:
         bool find = false;
         for (Order *order : pendingOrders, inProcessOrders, completedOrders)
         {
-            if (order->getId() == id)
-            {
-                string annoying = "Pending";
-                if (order->getStatus() == OrderStatus::DELIVERING)
-                    annoying = "Delivering";
-                else if (order->getStatus() == OrderStatus::COMPLETED)
-                    annoying = "Completed";
-                else if (order->getStatus() == OrderStatus::COLLECTING)
-                    annoying = "Collecting";
-                res += "OrderStatus: " + annoying + "\n";
-                find = true;
-                res += "CustomerID: " + std::to_string(order->getCustomerId()) + "\n" + "Collector: ";
-                if (order->getCollectorId() != NO_ORDER)
-                    res += order->getCollectorId();
-                else
-                    res += "None";
-                res += "Driver: ";
-                if (order->getDriverId() != NO_ORDER)
-                    res += order->getDriverId();
-                else
-                    res += "None";
-                break;
-            }
+            if (order->getId() == id) return order->toString();
         }
         if (!find)
             return "Order doesn't exist";
@@ -302,14 +285,8 @@ public:
                     {
                         if (order->getId() == ID)
                         {
-                            string annoying = "Pending";
-                            if (order->getStatus() == OrderStatus::DELIVERING)
-                                annoying = "Delivering";
-                            else if (order->getStatus() == OrderStatus::COMPLETED)
-                                annoying = "Completed";
-                            else if (order->getStatus() == OrderStatus::COLLECTING)
-                                annoying = "Collecting";
-                            res += "OrderStatus: " + annoying + "\n";
+                            res += "OrderStatus: " + std::to_string(
+                                static_cast<int>(order->getStatus())) + "\n";
                         }
                     }
                 }
@@ -318,9 +295,23 @@ public:
             }
         }
         if (!find)
-            return "Order doesn't exist";
+            return "Customer doesn't exist";
     }
-
+    string getVolunteerStatus(int id){
+        for(Volunteer* volunteer : volunteers){
+            if(volunteer->getId()==id){
+                return volunteer->toString();
+            }
+        }
+        return "Volunteer doesn't exist";
+    }
+    string getActionsLog(){
+        string res;
+        for(BaseAction* action : actionsLog){
+            res += action->toString() + "\n";
+        }
+        return res;
+    }
 private:
     bool isOpen;
     vector<BaseAction *> actionsLog;

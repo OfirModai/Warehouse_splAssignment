@@ -40,10 +40,7 @@ class Customer {
         vector<int> &getOrdersId() const{
             static vector<int> ref_ordersId = ordersId;
             return ref_ordersId;
-        }
-
-        
-
+        }        
         virtual string getType()=0;
     private:
         const int id;
