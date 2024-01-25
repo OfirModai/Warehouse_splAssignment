@@ -149,6 +149,7 @@ public:
     void start()
     {
         isOpen = true;
+        cout << "WareHouse is Open!" << std::endl;
         open();
     }
 

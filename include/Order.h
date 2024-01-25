@@ -79,8 +79,7 @@ public:
 
     const std::string toString_close() const
     {
-        return "OrderID: " + std::to_string(id) + " , CustomerID: " + std::to_string(customerId)
-        + " , OrderStatus: " + std::to_string(static_cast<int>(status));
+        return "OrderID: " + std::to_string(id) + " , CustomerID: " + std::to_string(customerId) + " , OrderStatus: " + std::to_string(static_cast<int>(status));
     }
 
 private:
