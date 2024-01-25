@@ -193,26 +193,11 @@ public:
             cout << menu << std::endl;
 
             cin >> input;
+            do_it(input);
         }
     }
 
-    void do_it(string input)
-    {
-        if (input[0] == '0')
-        {
-            int numOfSteps = std::stoi(input.substr(2));
-            SimulateStep *simulateStep = new SimulateStep(numOfSteps);
-            simulateStep->act(*this);
-        }
-        else if (input[0] == '1')
-        {
-            int numOfSteps = std::stoi(input.substr(2));
-            SimulateStep *simulateStep = new SimulateStep(numOfSteps);
-            simulateStep->act(*this);
-        }
-    }
-
-    string addOrder(int customerId)
+        string addOrder(int customerId)
     {
         int i;
         for (i = 0; i < customers.size(); i++)
@@ -372,6 +357,7 @@ private:
     int customerCounter;  // For assigning unique customer IDs
     int volunteerCounter; // For assigning unique volunteer IDs
     int orderCounter;
+
     void deleteVectors()
     {
         while (actionsLog.size() > 0)
@@ -431,5 +417,46 @@ private:
         {
             customers.push_back(item->clone());
         }
+    }
+    void do_it(string input)
+    {
+        BaseAction *action;
+        if (input[0] == '0')
+            action = new SimulateStep(std::stoi(input.substr(2)));
+        else if (input[0] == '1')
+            action = new AddOrder(std::stoi(input.substr(2)));
+        else if (input[0] == '2')
+        {
+            std::istringstream iss(input.substr(2));
+            std::string customerName, customerType;
+            int distance, maxOrders;
+            if (iss >> customerName >> customerType >> distance >> maxOrders)
+                action = new AddCustomer(customerName, customerType, distance, maxOrders);
+            else
+            {
+                cout << "Wrong input" << std::endl;
+                return;
+            }
+        }
+        else if (input[0] == '3')
+            action = new PrintOrderStatus(std::stoi(input.substr(2)));
+        else if (input[0] == '4')
+            action = new PrintCustomerStatus(std::stoi(input.substr(2)));
+        else if (input[0] == '5')
+            action = new PrintVolunteerStatus(std::stoi(input.substr(2)));
+        else if (input[0] == '6')
+            action = new PrintActionsLog();
+        else if (input[0] == '7')
+            action = new Close();
+        else if (input[0] == '8')
+            action = new BackupWareHouse();
+        else if (input[0] == '9')
+            action = new RestoreWareHouse();
+        else
+        {
+            cout << "Wrong input" << std::endl;
+            return;
+        }
+        action->act(*this);
     }
 };
