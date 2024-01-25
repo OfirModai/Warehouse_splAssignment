@@ -304,6 +304,12 @@ public:
         BaseAction::act(wareHouse);
         complete();
     }
+    BackupWareHouse *clone() const override{
+        return new BackupWareHouse(*this);
+    }
+    string toString() const override{
+        return "BackupWarehouse: " + BaseAction::toString();
+    }
 
 private:
 };
