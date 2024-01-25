@@ -24,6 +24,9 @@ public:
     WareHouse(const string &configFilePath);
     WareHouse(const WareHouse &other);
     WareHouse &operator=(const WareHouse &other);
+    WareHouse::WareHouse(WareHouse &&other) noexcept;
+    WareHouse &WareHouse::operator=(WareHouse &&other) noexcept;
+
     ~WareHouse();
     void start(); // infinite loop which get inputs from the user
     void addOrder(Order *order);
@@ -119,12 +122,36 @@ public:
         assignVectors(other);
         return *this;
     }
+    WareHouse::WareHouse(WareHouse &&other) noexcept
+        : isOpen(other.isOpen), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter),
+          actionsLog(std::move(other.actionsLog)), volunteers(std::move(other.volunteers)), pendingOrders(std::move(other.pendingOrders)),
+          inProcessOrders(std::move(other.inProcessOrders)), completedOrders(std::move(other.completedOrders)), customers(std::move(other.customers)) {}
+    WareHouse &WareHouse::operator=(WareHouse &&other) noexcept
+    {
+        if (this == &other)
+            return *this;
+        actionsLog.clear();
+        volunteers.clear();
+        pendingOrders.clear();
+        inProcessOrders.clear();
+        completedOrders.clear();
+        customers.clear();
+
+        actionsLog = std::move(other.actionsLog);
+        volunteers = std::move(other.volunteers);
+        pendingOrders = std::move(other.pendingOrders);
+        inProcessOrders = std::move(other.inProcessOrders);
+        completedOrders = std::move(other.completedOrders);
+        customers = std::move(other.customers);
+    }
     ~WareHouse() { deleteVectors(); }
+
     void start()
     {
         isOpen = true;
         open();
     }
+
     void addOrder(Order *order)
     { // we got pointer, we are responsible to delete this object
         pendingOrders.push_back(order);
