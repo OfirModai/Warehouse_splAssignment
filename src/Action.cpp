@@ -70,7 +70,7 @@ public:
     void act(WareHouse &warehouse)
     {
         BaseAction::act(warehouse);
-        for (size_t i = 0; i < numOfSteps; i++) warehouse.SimulateStep();
+        for (size_t i = 0; i < numOfSteps; i++) warehouse.simulateStep();
         complete();
     }
     SimulateStep *clone() const override { return new SimulateStep(*this); }
@@ -321,6 +321,24 @@ public:
     void act(WareHouse &wareHouse) override;
     RestoreWareHouse *clone() const override;
     string toString() const override;
+
+    void act(WareHouse &wareHouse) override{
+        BaseAction::act(wareHouse);
+        if (backup != nullptr){
+            error("No Backup availble");
+            std::cout << "No Backup availble" << std::endl;
+        }
+        else{
+            to_restore = true;
+            complete();
+        }
+    }
+    RestoreWareHouse *clone() const override{
+        return new RestoreWareHouse(*this);
+    }
+    string toString() const override{
+        return "RestoreWareHouse: " + BaseAction::toString();
+    }
 
 private:
 };

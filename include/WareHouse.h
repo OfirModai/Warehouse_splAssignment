@@ -6,6 +6,7 @@ using namespace std;
 #include "Order.h"
 #include "Customer.h"
 #include "Volunteer.h"
+#include "Action.h"
 
 #include <fstream>
 #include <iostream>
@@ -40,7 +41,7 @@ public:
     string getCustomerStatus(int id);
 
     WareHouse(const string &configFilePath)
-        : isOpen(true), customerCounter(0), volunteerCounter(0), orderCounter(0)
+        : isOpen(false), customerCounter(0), volunteerCounter(0), orderCounter(0)
     {
         // Open the text file
         std::ifstream inputFile(configFilePath);
@@ -119,7 +120,11 @@ public:
         return *this;
     }
     ~WareHouse() { deleteVectors(); }
-    void start() { isOpen = true; }
+    void start()
+    {
+        isOpen = true;
+        open();
+    }
     void addOrder(Order *order)
     { // we got pointer, we are responsible to delete this object
         pendingOrders.push_back(order);
@@ -161,13 +166,51 @@ public:
         }
         throw runtime_error("no such order");
     }
-    void close() {
-        for(Order* order : pendingOrders, inProcessOrders, completedOrders){
-            cout<< order->toString() << std::endl;
-        } 
-        delete this;
+    void close()
+    {
+        for (Order *order : pendingOrders, inProcessOrders, completedOrders)
+        {
+            cout << order->toString_close() << std::endl;
+        }
+        delete this; // what happens??
     }
-    void open() { isOpen = true; };
+    void open()
+    {
+        std::string input;
+        while (input != "8" & input != "10")
+        {
+            std::string menu = "You may enter an action as described: \n";
+            menu += "SimulateStep: (<0> <numOfSteps>) \n";
+            menu += "AddOrder: (<1> <customerID>) \n";
+            menu += "AddCustomer: (<2> <customerName> <customerType> <distance> <maxOrders>) \n";
+            menu += "PrintOrderStatus: (<3> <orderID>) \n";
+            menu += "PrintCustomerStatus: (<4> <customerID>) \n";
+            menu += "PrintVolunteerStatus: (<5> <volunteerID>) \n";
+            menu += "PrintActionsLog: (<6>) \n";
+            menu += "close: (<7>) \n";
+            menu += "BackUpWareHouse: (<8>) \n";
+            menu += "RestoreWareHouse: (<9>) \n";
+            cout << menu << std::endl;
+
+            cin >> input;
+        }
+    }
+
+    void do_it(string input)
+    {
+        if (input[0] == '0')
+        {
+            int numOfSteps = std::stoi(input.substr(2));
+            SimulateStep *simulateStep = new SimulateStep(numOfSteps);
+            simulateStep->act(*this);
+        }
+        else if (input[0] == '1')
+        {
+            int numOfSteps = std::stoi(input.substr(2));
+            SimulateStep *simulateStep = new SimulateStep(numOfSteps);
+            simulateStep->act(*this);
+        }
+    }
 
     string addOrder(int customerId)
     {
@@ -197,7 +240,7 @@ public:
             customers.push_back(
                 new SoldierCustomer(customerCounter, customerName, distance, maxOrders));
     }
-    void SimulateStep()
+    void simulateStep()
     {
         // stage 1
         for (int i = 0; i < pendingOrders.size(); i++)
@@ -263,7 +306,8 @@ public:
         bool find = false;
         for (Order *order : pendingOrders, inProcessOrders, completedOrders)
         {
-            if (order->getId() == id) return order->toString();
+            if (order->getId() == id)
+                return order->toString();
         }
         if (!find)
             return "Order doesn't exist";
@@ -285,8 +329,7 @@ public:
                     {
                         if (order->getId() == ID)
                         {
-                            res += "OrderStatus: " + std::to_string(
-                                static_cast<int>(order->getStatus())) + "\n";
+                            res += "OrderStatus: " + std::to_string(static_cast<int>(order->getStatus())) + "\n";
                         }
                     }
                 }
@@ -297,21 +340,27 @@ public:
         if (!find)
             return "Customer doesn't exist";
     }
-    string getVolunteerStatus(int id){
-        for(Volunteer* volunteer : volunteers){
-            if(volunteer->getId()==id){
+    string getVolunteerStatus(int id)
+    {
+        for (Volunteer *volunteer : volunteers)
+        {
+            if (volunteer->getId() == id)
+            {
                 return volunteer->toString();
             }
         }
         return "Volunteer doesn't exist";
     }
-    string getActionsLog(){
+    string getActionsLog()
+    {
         string res;
-        for(BaseAction* action : actionsLog){
+        for (BaseAction *action : actionsLog)
+        {
             res += action->toString() + "\n";
         }
         return res;
     }
+
 private:
     bool isOpen;
     vector<BaseAction *> actionsLog;

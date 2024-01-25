@@ -4,6 +4,7 @@
 using namespace std;
 
 extern WareHouse* backup = nullptr;
+extern bool to_restore = false;
 
 int main(int argc, char** argv){
     if(argc!=2){
@@ -11,12 +12,20 @@ int main(int argc, char** argv){
         return 0;
     }
     string configurationFile = argv[1];
-    WareHouse wareHouse(configurationFile);
-    wareHouse.start();
+    WareHouse* wareHouse = new WareHouse (configurationFile);
+    wareHouse->start();
+
+    while (to_restore);
+    {
+        wareHouse = backup;
+        to_restore = false;
+        wareHouse->open();
+    }
+    
+
     if(backup!=nullptr){
     	delete backup;
     	backup = nullptr;
     }
-    if(backup!=nullptr) delete backup;
     return 0;
 }
