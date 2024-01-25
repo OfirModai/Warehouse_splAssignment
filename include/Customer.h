@@ -10,8 +10,7 @@ class Order;
 class Customer
 {
 public:
-    Customer(int id, const std::string &name, int locationDistance, int maxOrders)
-        : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders) {}
+    Customer(int id, const std::string &name, int locationDistance, int maxOrders);
     const string &getName() const;
     int getId() const;
     int getCustomerDistance() const;
@@ -47,10 +46,7 @@ class CivilianCustomer : public Customer
 public:
     CivilianCustomer(int id, string name, int locationDistance, int maxOrders);
     CivilianCustomer *clone() const override;
-    string getType() override
-    {
-        return "Civilian";
-    }
+    string getType() override;
 
 private:
 };
