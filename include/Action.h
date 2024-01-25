@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "WareHouse.h"
+#include "../include/WareHouse.h"
 using std::string;
 using std::vector;
 
@@ -16,7 +16,7 @@ enum class CustomerType
     Soldier,
     Civilian
 };
-
+class WareHouse;
 class Customer;
 
 class BaseAction

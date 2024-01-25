@@ -1,4 +1,5 @@
-#include "include/WareHouse.h"
+#pragma once
+#include "../include/WareHouse.h"
 #include <iostream>
 
 using namespace std;

@@ -6,18 +6,6 @@
 using std::string;
 using std::vector;
 
-enum class ActionStatus
-{
-    COMPLETED,
-    ERROR
-};
-
-enum class CustomerType
-{
-    Soldier,
-    Civilian
-};
-
 class Customer;
 
 class BaseAction

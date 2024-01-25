@@ -36,7 +36,6 @@ public:
     SoldierCustomer(int id, string name, int locationDistance, int maxOrders);
     SoldierCustomer *clone() const override;
     string getType() override;
-    SoldierCustomer *clone() const override;
 
 private:
 };
