@@ -177,7 +177,7 @@ public:
     void open()
     {
         std::string input;
-        while (input != "8" & input != "10")
+        while (input != "7" & input != "9")
         {
             std::string menu = "You may enter an action as described: \n";
             menu += "SimulateStep: (<0> <numOfSteps>) \n";
@@ -197,7 +197,7 @@ public:
         }
     }
 
-        string addOrder(int customerId)
+    string addOrder(int customerId)
     {
         int i;
         for (i = 0; i < customers.size(); i++)
