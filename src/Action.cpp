@@ -23,22 +23,20 @@ class Customer;
 class BaseAction
 {
 public:
-    BaseAction();
-    ActionStatus getStatus() const;
-    virtual void act(WareHouse &wareHouse);
-    virtual string toString() const;
-    virtual BaseAction *clone() const = 0;
-
     ActionStatus getStatus() const { return status; }
-    BaseAction(): errorMsg("didn't act yet"), status(ActionStatus::ERROR){}
+    BaseAction() : errorMsg("didn't act yet"), status(ActionStatus::ERROR) {}
     virtual void act(WareHouse &wareHouse)
     {
         wareHouse.addAction(this);
     }
-    virtual string toString() const{
-        if(status==ActionStatus::COMPLETED) return "COMPLETED";
+    virtual string toString() const
+    {
+        if (status == ActionStatus::COMPLETED)
+            return "COMPLETED";
         return "ERROR";
     }
+    virtual BaseAction *clone() const = 0;
+
 protected:
     void complete();
     void error(string errorMsg);
@@ -61,20 +59,17 @@ class SimulateStep : public BaseAction
 {
 
 public:
-    SimulateStep(int numOfSteps);
-    void act(WareHouse &wareHouse) override;
-    std::string toString() const override;
-    SimulateStep *clone() const override;
-
     SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {}
     void act(WareHouse &warehouse)
     {
         BaseAction::act(warehouse);
-        for (size_t i = 0; i < numOfSteps; i++) warehouse.simulateStep();
+        for (size_t i = 0; i < numOfSteps; i++)
+            warehouse.simulateStep();
         complete();
     }
     SimulateStep *clone() const override { return new SimulateStep(*this); }
-    std::string toString() const override{
+    std::string toString() const override
+    {
         return "simulateStep " + std::to_string(numOfSteps) + " " + BaseAction::toString();
     }
 
@@ -85,11 +80,6 @@ private:
 class AddOrder : public BaseAction
 {
 public:
-    AddOrder(int id);
-    void act(WareHouse &wareHouse) override;
-    AddOrder *clone() const override;
-    string toString() const override;
-
     AddOrder(int id) : customerId(id) {}
     void act(WareHouse &wareHouse) override
     {
@@ -103,7 +93,8 @@ public:
             cout << this->toString();
         }
     }
-    std::string toString() const override{
+    std::string toString() const override
+    {
         return "order " + std::to_string(customerId) + " " + BaseAction::toString();
     }
     AddOrder *clone() const override { return new AddOrder(*this); }
@@ -115,11 +106,6 @@ private:
 class AddCustomer : public BaseAction
 {
 public:
-    AddCustomer(string customerName, string customerType, int distance, int maxOrders);
-    void act(WareHouse &wareHouse) override;
-    AddCustomer *clone() const override;
-    string toString() const override;
-
     AddCustomer(string customerName, string customerType, int distance, int maxOrders)
         : customerName(customerName), customerType(convertStringToCustomerType(customerType)),
           distance(distance), maxOrders(maxOrders) {}
@@ -139,8 +125,7 @@ public:
         if (customerType == CustomerType::Civilian)
             annoying = "civilian";
         return "customer " + customerName + " " + annoying + " " +
-               std::to_string(distance) + " " + std::to_string(maxOrders) 
-               + " " + BaseAction::toString();
+               std::to_string(distance) + " " + std::to_string(maxOrders) + " " + BaseAction::toString();
     }
 
 private:
@@ -161,18 +146,15 @@ private:
 class PrintOrderStatus : public BaseAction
 {
 public:
-    PrintOrderStatus(int id);
-    void act(WareHouse &wareHouse) override;
-    PrintOrderStatus *clone() const override;
-    string toString() const override;
-
     PrintOrderStatus(int id) : orderId(id) {}
     void act(WareHouse &wareHouse) override
     {
         BaseAction::act(wareHouse);
         string s = wareHouse.getOrderStatus(orderId);
-        if(s=="Order doesn't exist") error(s);
-        else complete();
+        if (s == "Order doesn't exist")
+            error(s);
+        else
+            complete();
         std::cout << s << std::endl;
     }
     PrintOrderStatus *clone() const override
@@ -191,18 +173,15 @@ private:
 class PrintCustomerStatus : public BaseAction
 {
 public:
-    PrintCustomerStatus(int customerId);
-    void act(WareHouse &wareHouse) override;
-    PrintCustomerStatus *clone() const override;
-    string toString() const override;
-
     PrintCustomerStatus(int customerId) : customerId(customerId) {}
     void act(WareHouse &wareHouse) override
     {
         BaseAction::act(wareHouse);
         string s = wareHouse.getCustomerStatus(customerId);
-        if(s=="Customer doesn't exist") error(s);
-        else complete();
+        if (s == "Customer doesn't exist")
+            error(s);
+        else
+            complete();
         std::cout << s << std::endl;
     }
     PrintCustomerStatus *clone() const override
@@ -221,18 +200,15 @@ private:
 class PrintVolunteerStatus : public BaseAction
 {
 public:
-    PrintVolunteerStatus(int id);
-    void act(WareHouse &wareHouse) override;
-    PrintVolunteerStatus *clone() const override;
-    string toString() const override;
-
     PrintVolunteerStatus(int id) : VolunteerId(id) {}
     void act(WareHouse &wareHouse) override
     {
         BaseAction::act(wareHouse);
         string s = wareHouse.getVolunteerStatus(VolunteerId);
-        if(s=="Volunteer doesn't exist") error(s);
-        else complete();
+        if (s == "Volunteer doesn't exist")
+            error(s);
+        else
+            complete();
         std::cout << s << std::endl;
     }
     PrintVolunteerStatus *clone() const override
@@ -243,6 +219,7 @@ public:
     {
         return "PrintVolunteerStatus: " + BaseAction::toString();
     }
+
 private:
     const int VolunteerId;
 };
@@ -250,11 +227,6 @@ private:
 class PrintActionsLog : public BaseAction
 {
 public:
-    PrintActionsLog();
-    void act(WareHouse &wareHouse) override;
-    PrintActionsLog *clone() const override;
-    string toString() const override;
-
     void act(WareHouse &wareHouse) override
     {
         string s = wareHouse.getActionsLog();
@@ -269,45 +241,42 @@ public:
     {
         return "PrintActionsLog: " + BaseAction::toString();
     }
+
 private:
 };
 
 class Close : public BaseAction
 {
 public:
-    Close();
-    Close *clone() const override;
-    void act(WareHouse &wareHouse) override;
-    string toString() const override;
-
-    Close *clone() const override{return new Close(*this);}
-    string toString() const override{return "Close: " + BaseAction::toString();}
-    void act(WareHouse &wareHouse){
+    Close *clone() const override { return new Close(*this); }
+    string toString() const override { return "Close: " + BaseAction::toString(); }
+    void act(WareHouse &wareHouse)
+    {
         wareHouse.close();
         complete();
         std::cout << "end program" << std::endl;
     }
+
 private:
 };
 
 class BackupWareHouse : public BaseAction
 {
 public:
-    BackupWareHouse();
-    void act(WareHouse &wareHouse) override;
-    BackupWareHouse *clone() const override;
-    string toString() const override;
-
-    void act(WareHouse &wareHouse) override{
-        if(backup!=nullptr) delete backup;
+    void act(WareHouse &wareHouse) override
+    {
+        if (backup != nullptr)
+            delete backup;
         backup = new WareHouse(wareHouse);
         BaseAction::act(wareHouse);
         complete();
     }
-    BackupWareHouse *clone() const override{
+    BackupWareHouse *clone() const override
+    {
         return new BackupWareHouse(*this);
     }
-    string toString() const override{
+    string toString() const override
+    {
         return "BackupWarehouse: " + BaseAction::toString();
     }
 
@@ -317,26 +286,26 @@ private:
 class RestoreWareHouse : public BaseAction
 {
 public:
-    RestoreWareHouse();
-    void act(WareHouse &wareHouse) override;
-    RestoreWareHouse *clone() const override;
-    string toString() const override;
-
-    void act(WareHouse &wareHouse) override{
+    void act(WareHouse &wareHouse) override
+    {
         BaseAction::act(wareHouse);
-        if (backup != nullptr){
+        if (backup != nullptr)
+        {
             error("No Backup availble");
             std::cout << "No Backup availble" << std::endl;
         }
-        else{
+        else
+        {
             to_restore = true;
             complete();
         }
     }
-    RestoreWareHouse *clone() const override{
+    RestoreWareHouse *clone() const override
+    {
         return new RestoreWareHouse(*this);
     }
-    string toString() const override{
+    string toString() const override
+    {
         return "RestoreWareHouse: " + BaseAction::toString();
     }
 
