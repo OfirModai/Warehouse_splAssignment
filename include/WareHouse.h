@@ -23,9 +23,9 @@ class WareHouse
 public:
     WareHouse(const string &configFilePath);
     WareHouse(const WareHouse &other);
-    WareHouse &operator=(const WareHouse &other);
-    WareHouse::WareHouse(WareHouse &&other) noexcept;
-    WareHouse &WareHouse::operator=(WareHouse &&other) noexcept;
+    WareHouse& operator=(const WareHouse &other);
+    WareHouse(WareHouse &&other) noexcept;
+    WareHouse& operator=(WareHouse &&other) noexcept;
     ~WareHouse();
     void start(); // infinite loop which get inputs from the user
     void addOrder(Order *order);
