@@ -91,8 +91,8 @@ public:
     int getDistancePerStep() const;
     bool decreaseDistanceLeft(); // Decrease distanceLeft by distancePerStep,return true if distanceLeft<=0,false otherwise
     bool hasOrdersLeft() const override;
-    bool canTakeOrder(const Order &order) const override; // Signal if the volunteer is not busy and the order is within the maxDistance
-    void acceptOrder(const Order &order) override;        // Reset distanceLeft to order's distance
+    virtual bool canTakeOrder(const Order &order) const override; // Signal if the volunteer is not busy and the order is within the maxDistance
+    virtual void acceptOrder(const Order &order) override;        // Reset distanceLeft to order's distance
     void step() override;                                 // Decrease distanceLeft by distancePerStep
     string toString() const override;
     bool isCollector() const override;

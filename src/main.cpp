@@ -4,8 +4,8 @@
 
 using namespace std;
 
-extern WareHouse *backup = nullptr;
-extern bool to_restore = false;
+WareHouse *backup = nullptr;
+bool to_restore = false;
 
 int main(int argc, char **argv)
 {

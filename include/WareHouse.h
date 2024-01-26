@@ -31,7 +31,7 @@ public:
     void addOrder(Order *order);
     string addOrder(int customerId);
     void addAction(BaseAction *action);
-    void addCustomer(const string &customerName, CustomerType customerType, int distance, int maxOrders);
+    void addCustomer(const string &customerName, string customerType, int distance, int maxOrders);
     const vector<BaseAction *> &getActions() const;
     Customer &getCustomer(int customerId) const;
     Volunteer &getVolunteer(int volunteerId) const;
@@ -58,5 +58,5 @@ private:
 
     void deleteVectors();
     void assignVectors(const WareHouse &other);
-    void do_it(string input);
+    void makeActionByString(string input);
 };

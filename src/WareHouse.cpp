@@ -7,21 +7,13 @@ using namespace std;
 #include "Customer.h"
 #include "Volunteer.h"
 #include "Action.h"
+#include "WareHouse.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-class BaseAction;
-class Volunteer;
-
-// Warehouse responsible for Volunteers, Customers Actions, and Orders.
-
-class WareHouse
-{
-
-public:
-    WareHouse(const string &configFilePath)
+    WareHouse::WareHouse(const string &configFilePath)
         : isOpen(false), customerCounter(0), volunteerCounter(0), orderCounter(0)
     {
         // Open the text file
@@ -82,13 +74,13 @@ public:
         // Close the file
         inputFile.close();
     }
-    WareHouse(const WareHouse &other)
+    WareHouse::WareHouse(const WareHouse &other)
         : isOpen(other.isOpen), customerCounter(other.customerCounter),
           volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter)
     {
         assignVectors(other);
     }
-    WareHouse &operator=(const WareHouse &other)
+    WareHouse &WareHouse::operator=(const WareHouse &other)
     {
         if (&other == this)
             return *this;
@@ -122,19 +114,19 @@ public:
         completedOrders = std::move(other.completedOrders);
         customers = std::move(other.customers);
     }
-    ~WareHouse() { deleteVectors(); }
+    WareHouse::~WareHouse() { deleteVectors(); }
 
-    void start()
+    void WareHouse::start()
     {
         isOpen = true;
         cout << "WareHouse is Open!" << std::endl;
         open();
     }
-    void addOrder(Order *order)
+    void WareHouse::addOrder(Order *order)
     { // we got pointer, we are responsible to delete this object
         pendingOrders.push_back(order);
     }
-    Customer &getCustomer(int customerId) const
+    Customer &WareHouse::getCustomer(int customerId) const
     {
         for (int i = 0; i < customers.size(); i++)
         {
@@ -143,7 +135,7 @@ public:
         }
         throw runtime_error("no such customer");
     }
-    Volunteer &getVolunteer(int volunteerId) const
+    Volunteer &WareHouse::getVolunteer(int volunteerId) const
     {
         for (int i = 0; i < volunteers.size(); i++)
         {
@@ -152,7 +144,7 @@ public:
         }
         throw runtime_error("no such volunteer");
     }
-    Order &getOrder(int orderId) const
+    Order &WareHouse::getOrder(int orderId) const
     {
         for (int i = 0; i < pendingOrders.size(); i++)
         {
@@ -171,7 +163,7 @@ public:
         }
         throw runtime_error("no such order");
     }
-    void close()
+    void WareHouse::close()
     {
         for (Order *order : pendingOrders, inProcessOrders, completedOrders)
         {
@@ -179,7 +171,7 @@ public:
         }
         delete this; // what happens??
     }
-    void open()
+    void WareHouse::open()
     {
         std::string input;
         while (input != "7" & input != "9")
@@ -198,10 +190,10 @@ public:
             cout << menu << std::endl;
 
             cin >> input;
-            do_it(input);
+            makeActionByString(input);
         }
     }
-    string addOrder(int customerId)
+    string WareHouse::addOrder(int customerId)
     {
         int i;
         for (i = 0; i < customers.size(); i++)
@@ -219,17 +211,17 @@ public:
         addOrder(new Order(orderCounter, customerId, customers[i]->getCustomerDistance()));
         return "";
     }
-    void addAction(BaseAction *action) { actionsLog.push_back(action); }
-    void addCustomer(const string &customerName, CustomerType customerType, int distance, int maxOrders)
+    void WareHouse::addAction(BaseAction *action) { actionsLog.push_back(action); }
+    void WareHouse::addCustomer(const string &customerName, string customerType, int distance, int maxOrders)
     {
-        if (customerType == CustomerType::Civilian)
+        if (customerType == "Civilian")
             customers.push_back(
                 new CivilianCustomer(customerCounter, customerName, distance, maxOrders));
         else
             customers.push_back(
                 new SoldierCustomer(customerCounter, customerName, distance, maxOrders));
     }
-    void simulateStep()
+    void WareHouse::simulateStep()
     {
         // stage 1
         for (int i = 0; i < pendingOrders.size(); i++)
@@ -290,19 +282,7 @@ public:
         }
     }
 
-private:
-    bool isOpen;
-    vector<BaseAction *> actionsLog;
-    vector<Volunteer *> volunteers;
-    vector<Order *> pendingOrders;
-    vector<Order *> inProcessOrders;
-    vector<Order *> completedOrders;
-    vector<Customer *> customers;
-    int customerCounter;  // For assigning unique customer IDs
-    int volunteerCounter; // For assigning unique volunteer IDs
-    int orderCounter;
-
-    void deleteVectors()
+    void WareHouse::deleteVectors()
     {
         while (actionsLog.size() > 0)
         {
@@ -335,7 +315,7 @@ private:
             customers.pop_back();
         }
     }
-    void assignVectors(const WareHouse &other)
+    void WareHouse::assignVectors(const WareHouse &other)
     {
         for (BaseAction *item : other.actionsLog)
         {
@@ -362,7 +342,7 @@ private:
             customers.push_back(item->clone());
         }
     }
-    void do_it(string input)
+    void WareHouse::makeActionByString(string input)
     {
         BaseAction *action;
         if (input[0] == '0')
@@ -404,7 +384,7 @@ private:
         action->act(*this);
     }
 
-    string getOrderStatus(int id)
+    string WareHouse::getOrderStatus(int id)
     {
         string res = "OrderId: " + std::to_string(id) + "\n";
         bool find = false;
@@ -416,7 +396,7 @@ private:
         if (!find)
             return "Order doesn't exist";
     }
-    string getCustomerStatus(int id)
+    string WareHouse::getCustomerStatus(int id)
     {
         string res = "CustomerID: " + std::to_string(id) + "\n";
         bool find = false;
@@ -444,7 +424,7 @@ private:
         if (!find)
             return "Customer doesn't exist";
     }
-    string getVolunteerStatus(int id)
+    string WareHouse::getVolunteerStatus(int id)
     {
         for (Volunteer *volunteer : volunteers)
         {
@@ -455,7 +435,7 @@ private:
         }
         return "Volunteer doesn't exist";
     }
-    string getActionsLog()
+    string WareHouse::getActionsLog()
     {
         string res;
         for (BaseAction *action : actionsLog)
@@ -464,4 +444,3 @@ private:
         }
         return res;
     }
-};
