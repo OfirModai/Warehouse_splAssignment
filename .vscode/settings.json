@@ -46,5 +46,12 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "fstream": "cpp"
-    }
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/modai/projects/spl_ex1/spl_ex1/bin",
+            "binaryPath": "/home/modai/projects/spl_ex1/spl_ex1/bin/myprogram",
+            "binaryArgs": ["configFileExample.txt"]
+        }
+    ]
 }

@@ -1,4 +1,3 @@
-# Makefile for a C++ project
 
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Iinclude

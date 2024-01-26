@@ -1,8 +1,4 @@
-#pragma once
-#include "../include/WareHouse.h"
-#include <iostream>
-
-using namespace std;
+#include "../include/main.h"
 
 WareHouse *backup = nullptr;
 bool to_restore = false;
@@ -29,6 +25,11 @@ int main(int argc, char **argv)
     {
         delete backup;
         backup = nullptr;
+    }
+    if (wareHouse != nullptr)
+    {
+        delete wareHouse;
+        wareHouse = nullptr;
     }
     return 0;
 }
