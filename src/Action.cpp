@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "WareHouse.h"
-#include "main.cpp"
+#include "main.h"
 #include "Action.h"
 using std::string;
 using std::vector;
