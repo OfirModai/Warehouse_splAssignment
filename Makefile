@@ -1,26 +1,24 @@
+# Makefile
 
-CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Iinclude
-
+CC = g++
+CFLAGS = -Wall -Weffc++ -std=c++11 -g -Iinclude
+TARGET = bin/warehouse
 SRCDIR = src
-OBJDIR = obj
-BINDIR = bin
+INCLUDEDIR = include
+BUILDDIR = bin
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
+OBJS = $(patsubst $(SRCDIR)/%.cpp,$(BUILDDIR)/%.o,$(SRCS))
 
-SOURCES := $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SOURCES))
-EXECUTABLE = $(BINDIR)/myprogram
+all: $(TARGET)
 
-all: $(EXECUTABLE)
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
 
-$(EXECUTABLE): $(OBJECTS)
-	@mkdir -p $(BINDIR)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	mkdir -p $(BUILDDIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+.PHONY: clean
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
-
-.PHONY: all clean
+	rm -rf $(BUILDDIR) $(TARGET)

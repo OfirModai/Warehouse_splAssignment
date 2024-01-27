@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include "Customer.h"
+#include "../include/Customer.h"
 using std::string;
 using std::vector;
 

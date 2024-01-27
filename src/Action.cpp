@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "WareHouse.h"
-#include "main.h"
-#include "Action.h"
+#include "../include/WareHouse.h"
+#include "../include/main.h"
+#include "../include/Action.h"
 using std::string;
 using std::vector;
 
