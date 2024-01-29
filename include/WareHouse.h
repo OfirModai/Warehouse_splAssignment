@@ -43,6 +43,7 @@ public:
     void simulateStep();
     string getVolunteerStatus(int id);
     string getActionsLog();
+    int orderCounter;
 
 private:
     bool isOpen;
@@ -54,8 +55,8 @@ private:
     vector<Customer *> customers;
     int customerCounter;  // For assigning unique customer IDs
     int volunteerCounter; // For assigning unique volunteer IDs
-    int orderCounter;
-
+    
+    string orderStatusToString(OrderStatus status);
     void deleteVectors();
     void assignVectors(const WareHouse &other);
     void makeActionByString(string input);

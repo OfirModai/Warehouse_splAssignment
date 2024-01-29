@@ -12,6 +12,7 @@ using std::vector;
     void BaseAction::act(WareHouse &wareHouse)
     {
         wareHouse.addAction(this);
+        cout<< this->toString() << std::endl;
     }
     string BaseAction::toString() const
     {
@@ -32,10 +33,10 @@ using std::vector;
     SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {}
     void SimulateStep::act(WareHouse &warehouse)
     {
-        BaseAction::act(warehouse);
         for (size_t i = 0; i < numOfSteps; i++)
             warehouse.simulateStep();
         complete();
+        BaseAction::act(warehouse);
     }
     SimulateStep *SimulateStep::clone() const { return new SimulateStep(*this); }
     std::string SimulateStep::toString() const
@@ -47,15 +48,10 @@ using std::vector;
     AddOrder::AddOrder(int id) : customerId(id) {}
     void AddOrder::act(WareHouse &wareHouse) 
     {
-        BaseAction::act(wareHouse);
         string message = wareHouse.addOrder(customerId);
-        if (message == "")
-            complete();
-        else
-        {
-            error(message);
-            cout << this->toString();
-        }
+        if (message == "") complete();
+        else error(message);
+        BaseAction::act(wareHouse);
     }
     std::string AddOrder::toString() const 
     {
@@ -68,9 +64,9 @@ using std::vector;
           distance(distance), maxOrders(maxOrders) {}
     void AddCustomer::act(WareHouse &wareHouse) 
     {
-        BaseAction::act(wareHouse);
         wareHouse.addCustomer(customerName, std::to_string(static_cast<int>(customerType)), distance, maxOrders);
         complete();
+        BaseAction::act(wareHouse);
     }
     AddCustomer *AddCustomer::clone() const 
     {
@@ -95,13 +91,12 @@ using std::vector;
     PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {}
     void PrintOrderStatus::act(WareHouse &wareHouse) 
     {
-        BaseAction::act(wareHouse);
         string s = wareHouse.getOrderStatus(orderId);
         if (s == "Order doesn't exist")
             error(s);
         else
             complete();
-        std::cout << s << std::endl;
+        cout<< s << std::endl;
     }
     PrintOrderStatus *PrintOrderStatus::clone() const 
     {
@@ -116,13 +111,12 @@ using std::vector;
     PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId) {}
     void PrintCustomerStatus::act(WareHouse &wareHouse) 
     {
-        BaseAction::act(wareHouse);
         string s = wareHouse.getCustomerStatus(customerId);
         if (s == "Customer doesn't exist")
             error(s);
         else
             complete();
-        std::cout << s << std::endl;
+        cout<< s << std::endl;
     }
     PrintCustomerStatus *PrintCustomerStatus::clone() const 
     {
@@ -136,13 +130,12 @@ using std::vector;
     PrintVolunteerStatus::PrintVolunteerStatus(int id) : VolunteerId(id) {}
     void PrintVolunteerStatus::act(WareHouse &wareHouse) 
     {
-        BaseAction::act(wareHouse);
         string s = wareHouse.getVolunteerStatus(VolunteerId);
         if (s == "Volunteer doesn't exist")
             error(s);
         else
             complete();
-        std::cout << s << std::endl;
+        cout<< s << std::endl;
     }
     PrintVolunteerStatus *PrintVolunteerStatus::clone() const 
     {
@@ -187,8 +180,8 @@ using std::vector;
         if (backup != nullptr)
             delete backup;
         backup = new WareHouse(wareHouse);
-        BaseAction::act(wareHouse);
         complete();
+        BaseAction::act(wareHouse);
     }
     BackupWareHouse *BackupWareHouse::clone() const 
     {
@@ -207,13 +200,13 @@ using std::vector;
         if (backup != nullptr)
         {
             error("No Backup availble");
-            std::cout << "No Backup availble" << std::endl;
         }
         else
         {
             to_restore = true;
             complete();
         }
+        BaseAction::act(wareHouse);
     }
     RestoreWareHouse *RestoreWareHouse::clone() const 
     {

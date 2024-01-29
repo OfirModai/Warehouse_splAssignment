@@ -20,7 +20,7 @@ int main(int argc, char **argv)
         to_restore = false;
         wareHouse->open();
     }
-
+    // make sure to delete warehouse objects
     if (backup != nullptr)
     {
         delete backup;
