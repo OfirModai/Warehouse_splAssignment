@@ -25,13 +25,14 @@ public:
     virtual void acceptOrder(const Order &order);            // Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
     virtual void step() = 0;                                 // Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
 
-    virtual string toString() const = 0;
+    virtual string toString() const;
     virtual Volunteer *clone() const = 0; // Return a copy of the volunteer
 
 
 protected:
     int completedOrderId; // Initialized to NO_ORDER if no order has been completed yet
     int activeOrderId;    // Initialized to NO_ORDER if no order is being processed
+    string boolToString(bool value) const;
 
 private:
     const int id;
@@ -54,7 +55,10 @@ public:
     string toString() const override;
     bool isCollector() const override;
 
-        private : const int coolDown; // The time it takes the volunteer to process an order
+protected:
+    string collectorToString() const;
+private :
+    const int coolDown; // The time it takes the volunteer to process an order
     int timeLeft;       // Time left until the volunteer finishes his current order
 };
 
@@ -96,6 +100,9 @@ public:
     void step() override;                                 // Decrease distanceLeft by distancePerStep
     string toString() const override;
     bool isCollector() const override;
+
+protected:
+    string driverToString() const;
 
 private:
     const int maxDistance;     // The maximum distance of ANY order the volunteer can take

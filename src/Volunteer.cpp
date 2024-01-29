@@ -25,6 +25,21 @@ void Volunteer::acceptOrder(const Order &order)
     activeOrderId = order.getId();
     completedOrderId = NO_ORDER;
 }
+string Volunteer::boolToString(bool value) const{
+    return value ? "True" : "False";
+}
+string Volunteer::toString() const{
+    std::string res = "VolunteerId: " + std::to_string(getId()) + "\nIsBusy: " + boolToString(isBusy()) + "\nOrderId: ";
+    if (!isBusy())
+    {
+        res += "None";
+    }
+    else
+    {
+        res += std::to_string(getActiveOrderId());
+    }
+    return res;
+}
 
 CollectorVolunteer::CollectorVolunteer(int id, string name, int coolDown)
     : Volunteer(id, name), coolDown(coolDown), timeLeft(0) {}
@@ -65,26 +80,16 @@ void CollectorVolunteer::acceptOrder(const Order &order)
     Volunteer::acceptOrder(order);
     timeLeft = coolDown;
 }
-string CollectorVolunteer::toString() const
+
+string CollectorVolunteer::toString() const{
+    return collectorToString() + "\nordersLeft: No Limit";
+}
+string CollectorVolunteer::collectorToString() const
 {
-    std::string res = "VolunteerId: " + std::to_string(getId()) + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: ";
-    if (!isBusy())
-    {
-        res += "None";
-    }
-    else
-    {
-        res += std::to_string(getActiveOrderId()) + "\n timeLeft: ";
-    }
-    if (timeLeft != 0)
-    {
-        res += std::to_string(getTimeLeft());
-    }
-    else
-    {
-        res += "None";
-    }
-    res += "\n ordersLeft: No Limit";
+    string res = Volunteer::toString();
+    res += "\ntimeLeft: ";
+    if (timeLeft != 0) res += std::to_string(getTimeLeft());
+    else res += "None";
     return res;
 }
 
@@ -110,25 +115,7 @@ int LimitedCollectorVolunteer::getMaxOrders() const { return maxOrders; }
 int LimitedCollectorVolunteer::getNumOrdersLeft() const { return ordersLeft; }
 string LimitedCollectorVolunteer::toString() const
 {
-    std::string res = "VolunteerId: " + std::to_string(getId()) + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: ";
-    if (!isBusy())
-    {
-        res += "None";
-    }
-    else
-    {
-        res += std::to_string(getActiveOrderId()) + "\n timeLeft: ";
-    }
-    if (getTimeLeft() != 0)
-    {
-        res += std::to_string(getTimeLeft());
-    }
-    else
-    {
-        res += "None";
-    }
-    res += "\n ordersLeft: " + ordersLeft;
-    return res;
+    return CollectorVolunteer::collectorToString() + "\nordersLeft: " + std::to_string(ordersLeft);
 }
 
 DriverVolunteer::DriverVolunteer(int id, string name, int maxDistance, int distancePerStep)
@@ -178,17 +165,8 @@ void DriverVolunteer::step()
         distanceLeft = 0;
     }
 }
-string DriverVolunteer::toString() const
-{
-    std::string res = "VolunteerId: " + std::to_string(getId()) + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: ";
-    if (!isBusy())
-    {
-        res += "None";
-    }
-    else
-    {
-        res += std::to_string(getActiveOrderId()) + "\n timeLeft: ";
-    }
+string DriverVolunteer::driverToString() const{
+    std::string res = Volunteer::toString() + "\nTimeLeft: ";
     if (distanceLeft != 0)
     {
         res += std::to_string(distanceLeft);
@@ -197,8 +175,11 @@ string DriverVolunteer::toString() const
     {
         res += "None";
     }
-    res += "\n ordersLeft: No Limit";
     return res;
+}
+string DriverVolunteer::toString() const
+{
+    return driverToString() + "\nordersLeft: No Limit";
 }
 
 LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep, int maxOrders)
@@ -223,23 +204,5 @@ void LimitedDriverVolunteer::acceptOrder(const Order &order)
 }
 string LimitedDriverVolunteer::toString() const
 {
-    std::string res = "VolunteerId: " + std::to_string(getId()) + "\n IsBusy: " + std::to_string(isBusy()) + "\n OrderId: ";
-    if (!isBusy())
-    {
-        res += "None";
-    }
-    else
-    {
-        res += std::to_string(getActiveOrderId()) + "\n timeLeft: ";
-    }
-    if (getDistanceLeft() != 0)
-    {
-        res += std::to_string(getDistanceLeft());
-    }
-    else
-    {
-        res += "None";
-    }
-    res += "\n ordersLeft: " + ordersLeft;
-    return res;
+    return driverToString() + "\n ordersLeft: " + std::to_string(ordersLeft);
 }
