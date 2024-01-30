@@ -16,7 +16,7 @@ enum class CustomerType
     Soldier,
     Civilian
 };
-
+class WareHouse;
 class Customer;
 
 class BaseAction
@@ -76,6 +76,7 @@ private:
     const CustomerType customerType;
     const int distance;
     const int maxOrders;
+    CustomerType convertStringToCustomerType(string s);
 };
 
 class PrintOrderStatus : public BaseAction

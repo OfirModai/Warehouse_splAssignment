@@ -23,15 +23,15 @@ class WareHouse
 public:
     WareHouse(const string &configFilePath);
     WareHouse(const WareHouse &other);
-    WareHouse &operator=(const WareHouse &other);
-    WareHouse::WareHouse(WareHouse &&other) noexcept;
-    WareHouse &WareHouse::operator=(WareHouse &&other) noexcept;
+    WareHouse& operator=(const WareHouse &other);
+    WareHouse(WareHouse &&other) noexcept;
+    WareHouse& operator=(WareHouse &&other) noexcept;
     ~WareHouse();
     void start(); // infinite loop which get inputs from the user
     void addOrder(Order *order);
     string addOrder(int customerId);
     void addAction(BaseAction *action);
-    void addCustomer(const string &customerName, CustomerType customerType, int distance, int maxOrders);
+    void addCustomer(const string &customerName, string customerType, int distance, int maxOrders);
     const vector<BaseAction *> &getActions() const;
     Customer &getCustomer(int customerId) const;
     Volunteer &getVolunteer(int volunteerId) const;
@@ -43,6 +43,7 @@ public:
     void simulateStep();
     string getVolunteerStatus(int id);
     string getActionsLog();
+    int orderCounter;
 
 private:
     bool isOpen;
@@ -54,9 +55,9 @@ private:
     vector<Customer *> customers;
     int customerCounter;  // For assigning unique customer IDs
     int volunteerCounter; // For assigning unique volunteer IDs
-    int orderCounter;
-
+    
+    string orderStatusToString(OrderStatus status);
     void deleteVectors();
     void assignVectors(const WareHouse &other);
-    void do_it(string input);
+    void makeActionByString(string input);
 };

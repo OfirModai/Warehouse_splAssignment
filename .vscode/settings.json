@@ -45,6 +45,26 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "fstream": "cpp"
-    }
+        "fstream": "cpp",
+        "complex": "cpp"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/modai/projects/spl_ex1/spl_ex1/bin",
+            "binaryPath": "/home/modai/projects/spl_ex1/spl_ex1/bin/myprogram",
+            "binaryArgs": [
+                "../configFileExample.txt"
+            ]
+        },
+        {
+            "cwd": "/home/modai/projects/spl_ex1/spl_ex1",
+            "binaryPath": "/home/modai/projects/spl_ex1/spl_ex1/my_program",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/modai/projects/spl_ex1/spl_ex1/bin",
+            "binaryPath": "/home/modai/projects/spl_ex1/spl_ex1/bin/main.o",
+            "binaryArgs": []
+        }
+    ]
 }
