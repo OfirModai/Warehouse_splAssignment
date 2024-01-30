@@ -21,6 +21,7 @@ public:
     int addOrder(int orderId);           // return OrderId if order was added successfully, -1 otherwise
     virtual Customer *clone() const = 0; // Return a copy of the customer
     virtual string getType() = 0;
+    virtual ~Customer();
 
 private:
     const int id;

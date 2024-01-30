@@ -45,6 +45,8 @@ using std::vector;
             return "soldier";
     }
 
+    BaseAction::~BaseAction(){};
+
     SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {}
     void SimulateStep::act(WareHouse &warehouse)
     {
@@ -184,6 +186,7 @@ using std::vector;
     string Close::toString() const { return "close " + BaseAction::toString(); }
     void Close::act(WareHouse &wareHouse)
     {
+        BaseAction::act(wareHouse);
         wareHouse.close();
         complete();
         std::cout << "end program" << std::endl;

@@ -164,6 +164,7 @@ using namespace std;
                 if (order->getId() == orderId) return *order;
             }
         }
+        return -1;
     }
     void WareHouse::close()
     {
@@ -373,6 +374,9 @@ using namespace std;
             return;
         }
         action->act(*this);
+        if(typeid(action) == typeid(Close)){
+            // close is the only object which doesn't get deleted beacuse it 
+        }
     }
 
     string WareHouse::getOrderStatus(int id)

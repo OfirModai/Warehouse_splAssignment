@@ -40,6 +40,8 @@ string Volunteer::toString() const{
     }
     return res;
 }
+Volunteer::~Volunteer(){};
+
 
 CollectorVolunteer::CollectorVolunteer(int id, string name, int coolDown)
     : Volunteer(id, name), coolDown(coolDown), timeLeft(0) {}

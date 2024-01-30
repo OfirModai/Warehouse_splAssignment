@@ -31,6 +31,8 @@ const vector<int> &Customer::getOrdersId() const
     return ref_ordersId;
 }
 
+Customer::~Customer(){};
+
 SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int maxOrders)
     : Customer(id, name, locationDistance, maxOrders) {}
 SoldierCustomer *SoldierCustomer::clone() const

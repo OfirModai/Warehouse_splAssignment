@@ -29,6 +29,7 @@ public:
     virtual BaseAction *clone() const = 0;
     static CustomerType convertStringToCustomerType(string s);
     static string convertCustomerTypeToString(CustomerType s);
+    virtual ~BaseAction();
 
 protected:
     void complete();

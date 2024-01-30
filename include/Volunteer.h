@@ -27,7 +27,7 @@ public:
 
     virtual string toString() const;
     virtual Volunteer *clone() const = 0; // Return a copy of the volunteer
-
+    virtual ~Volunteer();
 
 protected:
     int completedOrderId; // Initialized to NO_ORDER if no order has been completed yet
