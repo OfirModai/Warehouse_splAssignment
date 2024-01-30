@@ -11,7 +11,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/bin/warehouse",
             "MIMode": "gdb",
-            "args": ["configFileExample2.txt"],
+            "args": ["configFileExample.txt"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

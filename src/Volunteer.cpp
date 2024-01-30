@@ -144,7 +144,7 @@ bool DriverVolunteer::hasOrdersLeft() const { return true; }
 bool DriverVolunteer::canTakeOrder(const Order &order) const
 {
     return (activeOrderId == NO_ORDER & order.getDistance() <= maxDistance &
-            order.getStatus() == OrderStatus::COLLECTING & order.getCollectorId() == NO_VOLUNTEER);
+            order.getStatus() == OrderStatus::COLLECTING);
 }
 void DriverVolunteer::acceptOrder(const Order &order)
 {

@@ -58,5 +58,5 @@ private:
     
     void deleteVectors();
     void assignVectors(const WareHouse &other);
-    void makeActionByString(string input);
+    void makeActionByString(string& input);
 };

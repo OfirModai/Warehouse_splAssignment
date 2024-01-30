@@ -122,23 +122,12 @@ using namespace std;
     {
         isOpen = true;
         cout << "WareHouse is Open!" << std::endl;
-        std::string menu = "SimulateStep: (<0> <numOfSteps>) \n";
-        menu += "AddOrder: (<1> <customerID>) \n";
-        menu += "AddCustomer: (<2> <customerName> <customerType> <distance> <maxOrders>) \n";
-        menu += "PrintOrderStatus: (<3> <orderID>) \n";
-        menu += "PrintCustomerStatus: (<4> <customerID>) \n";
-        menu += "PrintVolunteerStatus: (<5> <volunteerID>) \n";
-        menu += "PrintActionsLog: (<6>) \n";
-        menu += "close: (<7>) \n";
-        menu += "BackUpWareHouse: (<8>) \n";
-        menu += "RestoreWareHouse: (<9>) \n";
-        cout << menu << std::endl;
         open();
     }
     void WareHouse::open()
     {
         std::string input;
-        while (input != "7")
+        while (isOpen)
         {
             cout<<"You may enter action as described: "<< std::endl;
             std::getline(std::cin, input);
@@ -198,10 +187,7 @@ using namespace std;
         }
         if (i == customers.size() || !customers[i]->canMakeOrder())
         {
-            string message = "Wrong customer ID";
-            if (i != customers.size())
-                message = "Cannot place this order";
-            return message;
+            return "Cannot place this order";
         }
         customers[i]->addOrder(orderCounter);
         addOrder(new Order(orderCounter, customerId, customers[i]->getCustomerDistance()));
@@ -260,11 +246,9 @@ using namespace std;
                     {
                         if (volunteer->isCollector()){
                             pendingOrders.push_back(inProcessOrders[i]);
-                            inProcessOrders[i]->setCollectorId(NO_VOLUNTEER);
                         }
                         else{
                             completedOrders.push_back(inProcessOrders[i]);
-                            inProcessOrders[i]->setDriverId(NO_VOLUNTEER);
                             inProcessOrders[i]->advanceStatus();
                         }
                         inProcessOrders.erase(inProcessOrders.begin() + i);
@@ -346,16 +330,19 @@ using namespace std;
             customers.push_back(item->clone());
         }
     }
-    void WareHouse::makeActionByString(string input)
+    void WareHouse::makeActionByString(string& input)
     {
         BaseAction *action;
-        if (input[0] == '0')
-            action = new SimulateStep(std::stoi(input.substr(2)));
-        else if (input[0] == '1')
-            action = new AddOrder(std::stoi(input.substr(2)));
-        else if (input[0] == '2')
+        std::istringstream iss(input);
+        std::string firstWord;
+        iss >> firstWord;
+        if (firstWord == "step")
+            action = new SimulateStep(std::stoi(input.substr(4)));
+        else if (firstWord == "order")
+            action = new AddOrder(std::stoi(input.substr(5)));
+        else if (firstWord == "customer")
         {
-            std::istringstream iss(input.substr(2));
+            std::istringstream iss(input.substr(9));
             std::string customerName, customerType;
             int distance, maxOrders;
             if (iss >> customerName >> customerType >> distance >> maxOrders)
@@ -366,19 +353,19 @@ using namespace std;
                 return;
             }
         }
-        else if (input[0] == '3')
-            action = new PrintOrderStatus(std::stoi(input.substr(2)));
-        else if (input[0] == '4')
-            action = new PrintCustomerStatus(std::stoi(input.substr(2)));
-        else if (input[0] == '5')
-            action = new PrintVolunteerStatus(std::stoi(input.substr(2)));
-        else if (input[0] == '6')
+        else if (firstWord == "orderStatus")
+            action = new PrintOrderStatus(std::stoi(input.substr(12)));
+        else if (firstWord == "customerStatus")
+            action = new PrintCustomerStatus(std::stoi(input.substr(15)));
+        else if (firstWord == "volunteerStatus")
+            action = new PrintVolunteerStatus(std::stoi(input.substr(16)));
+        else if (firstWord == "log")
             action = new PrintActionsLog();
-        else if (input[0] == '7')
+        else if (firstWord == "close")
             action = new Close();
-        else if (input[0] == '8')
+        else if (firstWord == "backup")
             action = new BackupWareHouse();
-        else if (input[0] == '9')
+        else if (firstWord == "restore")
             action = new RestoreWareHouse();
         else
         {

@@ -11,8 +11,10 @@ using std::vector;
     BaseAction::BaseAction() : errorMsg("didn't act yet"), status(ActionStatus::ERROR) {}
     void BaseAction::act(WareHouse &wareHouse)
     {
+        if(errorMsg=="didn't act yet") errorMsg = "";
         wareHouse.addAction(this);
-        cout<< this->toString() << std::endl;
+        if (status != ActionStatus::COMPLETED)
+            cout<< this->toString() << std::endl;
     }
     string BaseAction::toString() const
     {
@@ -24,7 +26,7 @@ using std::vector;
     void BaseAction::complete() { status = ActionStatus::COMPLETED; }
     void BaseAction::error(string errorMsg)
     {
-        errorMsg = errorMsg;
+        this->errorMsg = errorMsg;
         status = ActionStatus::ERROR;
     }
     string BaseAction::getErrorMsg() const { return errorMsg; }
@@ -63,8 +65,11 @@ using std::vector;
     {
         string message = wareHouse.addOrder(customerId);
         if (message == "") complete();
-        else error(message);
-        BaseAction::act(wareHouse);
+        else{
+            error(message);
+            cout << "ERROR: "+ message << std::endl;
+        }
+        wareHouse.addAction(this);
     }
     std::string AddOrder::toString() const 
     {
@@ -104,6 +109,7 @@ using std::vector;
         else
             complete();
         cout<< s << std::endl;
+        BaseAction::act(wareHouse);
     }
     PrintOrderStatus *PrintOrderStatus::clone() const 
     {
@@ -111,7 +117,7 @@ using std::vector;
     }
     string PrintOrderStatus::toString() const 
     {
-        return "PrintOrderStatus: " + BaseAction::toString();
+        return "orderStatus: " + orderId + BaseAction::toString();
     }
 
 
@@ -124,6 +130,7 @@ using std::vector;
         else
             complete();
         cout<< s << std::endl;
+        BaseAction::act(wareHouse);
     }
     PrintCustomerStatus *PrintCustomerStatus::clone() const 
     {
@@ -131,7 +138,7 @@ using std::vector;
     }
     string PrintCustomerStatus::toString() const 
     {
-        return "PrintCustomerStatus: " + BaseAction::toString();
+        return "customerStatus: "+ customerId + BaseAction::toString();
     }
 
     PrintVolunteerStatus::PrintVolunteerStatus(int id) : VolunteerId(id) {}
@@ -143,6 +150,7 @@ using std::vector;
         else
             complete();
         cout<< s << std::endl;
+        BaseAction::act(wareHouse);
     }
     PrintVolunteerStatus *PrintVolunteerStatus::clone() const 
     {
@@ -150,7 +158,7 @@ using std::vector;
     }
     string PrintVolunteerStatus::toString() const 
     {
-        return "PrintVolunteerStatus: " + BaseAction::toString();
+        return "volunteerStatus "+ VolunteerId + BaseAction::toString();
     }
 
     PrintActionsLog::PrintActionsLog(){};
@@ -159,6 +167,7 @@ using std::vector;
         string s = wareHouse.getActionsLog();
         complete();
         std::cout << s << std::endl;
+        BaseAction::act(wareHouse);
     }
     PrintActionsLog *PrintActionsLog::clone() const 
     {
@@ -166,13 +175,13 @@ using std::vector;
     }
     string PrintActionsLog::toString() const 
     {
-        return "PrintActionsLog: " + BaseAction::toString();
+        return "log: " + BaseAction::toString();
     }
 
 
     Close::Close(){};
     Close *Close::clone() const { return new Close(*this); }
-    string Close::toString() const { return "Close: " + BaseAction::toString(); }
+    string Close::toString() const { return "close " + BaseAction::toString(); }
     void Close::act(WareHouse &wareHouse)
     {
         wareHouse.close();
@@ -196,7 +205,7 @@ using std::vector;
     }
     string BackupWareHouse::toString() const 
     {
-        return "BackupWarehouse: " + BaseAction::toString();
+        return "backupWarehouse " + BaseAction::toString();
     }
 
 
@@ -221,5 +230,5 @@ using std::vector;
     }
     string RestoreWareHouse::toString() const 
     {
-        return "RestoreWareHouse: " + BaseAction::toString();
+        return "restoreWareHouse " + BaseAction::toString();
     }

@@ -41,7 +41,7 @@ const std::string Order::toString() const
 {
     std::string result = "Orderid: " + std::to_string(id) +
                          "\nOrderStatus: " + getStringStatus() +
-                         "\nCustomerid: " + std::to_string(customerId) + "\nCollector: ";
+                         "\nCustomerId: " + std::to_string(customerId) + "\nCollector: ";
     if (collectorId == NO_VOLUNTEER)
         result += "None ";
     else
