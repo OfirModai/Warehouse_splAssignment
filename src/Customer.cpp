@@ -25,7 +25,7 @@ int Customer::addOrder(int orderId)
         throw std::runtime_error("too many orders");
 }
 
-vector<int> &Customer::getOrdersId() const
+const vector<int> &Customer::getOrdersId() const
 {
     static vector<int> ref_ordersId = ordersId;
     return ref_ordersId;

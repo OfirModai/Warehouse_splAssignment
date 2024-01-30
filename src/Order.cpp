@@ -40,7 +40,7 @@ OrderStatus Order::getStatus() const { return status; }
 const std::string Order::toString() const
 {
     std::string result = "Orderid: " + std::to_string(id) +
-                         "\nOrderStatus: " + std::to_string(static_cast<int>(status)) +
+                         "\nOrderStatus: " + getStringStatus() +
                          "\nCustomerid: " + std::to_string(customerId) + "\nCollector: ";
     if (collectorId == NO_VOLUNTEER)
         result += "None ";
@@ -55,8 +55,23 @@ const std::string Order::toString() const
 }
 
 Order *Order::clone() { return new Order(*this); }
-
+string Order::getStringStatus() const{
+    switch ((int)getStatus())
+        {
+        case 0:
+            return "Pending";
+        case 1:
+            return "Collecting";
+        case 2:
+            return "Delivering";
+        case 3:
+            return "Completed";
+        default:
+            return "";
+        }
+}
 const std::string Order::toString_close() const
 {
-    return "OrderID: " + std::to_string(id) + " , CustomerID: " + std::to_string(customerId) + " , OrderStatus: " + std::to_string(static_cast<int>(status));
+    return "OrderID: " + std::to_string(id) + " , CustomerID: " +
+     std::to_string(customerId) + " , OrderStatus: " + getStringStatus();
 }

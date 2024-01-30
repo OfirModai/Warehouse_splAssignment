@@ -28,7 +28,20 @@ using std::vector;
         status = ActionStatus::ERROR;
     }
     string BaseAction::getErrorMsg() const { return errorMsg; }
-
+    CustomerType BaseAction::convertStringToCustomerType(string s)
+    {
+        if (s == "civilian")
+            return CustomerType::Civilian;
+        else
+            return CustomerType::Soldier;
+    }
+    string BaseAction::convertCustomerTypeToString(CustomerType s)
+    {
+        if (s == CustomerType::Civilian)
+            return "civilian";
+        else
+            return "soldier";
+    }
 
     SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {}
     void SimulateStep::act(WareHouse &warehouse)
@@ -60,11 +73,11 @@ using std::vector;
     AddOrder *AddOrder::clone() const { return new AddOrder(*this); }
 
     AddCustomer::AddCustomer(string customerName, string customerType, int distance, int maxOrders)
-        : customerName(customerName), customerType(convertStringToCustomerType(customerType)),
+        : customerName(customerName), customerType(BaseAction::convertStringToCustomerType(customerType)),
           distance(distance), maxOrders(maxOrders) {}
     void AddCustomer::act(WareHouse &wareHouse) 
     {
-        wareHouse.addCustomer(customerName, std::to_string(static_cast<int>(customerType)), distance, maxOrders);
+        wareHouse.addCustomer(customerName, BaseAction::convertCustomerTypeToString(customerType), distance, maxOrders);
         complete();
         BaseAction::act(wareHouse);
     }
@@ -81,13 +94,7 @@ using std::vector;
                std::to_string(distance) + " " + std::to_string(maxOrders) + " " + BaseAction::toString();
     }
 
-    CustomerType AddCustomer::convertStringToCustomerType(string s)
-    {
-        if (s == "civilian")
-            return CustomerType::Civilian;
-        else
-            return CustomerType::Soldier;
-    }
+    
     PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {}
     void PrintOrderStatus::act(WareHouse &wareHouse) 
     {
@@ -196,8 +203,8 @@ using std::vector;
     RestoreWareHouse::RestoreWareHouse(){};
     void RestoreWareHouse::act(WareHouse &wareHouse) 
     {
-        BaseAction::act(wareHouse);
-        if (backup != nullptr)
+
+        if (backup == nullptr)
         {
             error("No Backup availble");
         }

@@ -48,6 +48,8 @@ public:
 
     const std::string toString_close() const;
 
+    string getStringStatus() const;
+
 private:
     const int id;
     const int customerId;

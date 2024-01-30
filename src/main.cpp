@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 
     while (to_restore)
     {
-        wareHouse = backup;
+        *wareHouse = *backup;
         to_restore = false;
         wareHouse->open();
     }

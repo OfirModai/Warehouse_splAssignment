@@ -56,7 +56,6 @@ private:
     int customerCounter;  // For assigning unique customer IDs
     int volunteerCounter; // For assigning unique volunteer IDs
     
-    string orderStatusToString(OrderStatus status);
     void deleteVectors();
     void assignVectors(const WareHouse &other);
     void makeActionByString(string input);

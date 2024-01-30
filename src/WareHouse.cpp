@@ -43,7 +43,7 @@ using namespace std;
             if(n3!=0){
                 // this is a limited driver
                 volunteers.push_back(new LimitedDriverVolunteer(volunteerCounter, name, n1, n2, n3));
-                customerCounter++;
+                volunteerCounter++;
             }
             else if (n2!=0)
             {
@@ -85,8 +85,7 @@ using namespace std;
     }
     WareHouse &WareHouse::operator=(const WareHouse &other)
     {
-        if (&other == this)
-            return *this;
+        if (&other == this) return *this;
         isOpen = other.isOpen;
         customerCounter = other.customerCounter;
         volunteerCounter = other.volunteerCounter;
@@ -123,8 +122,7 @@ using namespace std;
     {
         isOpen = true;
         cout << "WareHouse is Open!" << std::endl;
-        std::string menu = "You may enter an action as described: \n";
-        menu += "SimulateStep: (<0> <numOfSteps>) \n";
+        std::string menu = "SimulateStep: (<0> <numOfSteps>) \n";
         menu += "AddOrder: (<1> <customerID>) \n";
         menu += "AddCustomer: (<2> <customerName> <customerType> <distance> <maxOrders>) \n";
         menu += "PrintOrderStatus: (<3> <orderID>) \n";
@@ -136,6 +134,16 @@ using namespace std;
         menu += "RestoreWareHouse: (<9>) \n";
         cout << menu << std::endl;
         open();
+    }
+    void WareHouse::open()
+    {
+        std::string input;
+        while (input != "7" & input != "9")
+        {
+            cout<<"You may enter action as described: "<< std::endl;
+            std::getline(std::cin, input);
+            makeActionByString(input);
+        }
     }
     void WareHouse::addOrder(Order *order)
     { // we got pointer, we are responsible to delete this object
@@ -182,16 +190,7 @@ using namespace std;
         }
         delete this; // what happens??
     }
-    void WareHouse::open()
-    {
-        std::string input;
-        while (input != "7" & input != "9")
-        {
-            cout<<"You may enter another action as described: "<< std::endl;
-            std::getline(std::cin, input);
-            makeActionByString(input);
-        }
-    }
+    
     string WareHouse::addOrder(int customerId)
     {
         int i;
@@ -220,6 +219,7 @@ using namespace std;
         else
             customers.push_back(
                 new SoldierCustomer(customerCounter, customerName, distance, maxOrders));
+        customerCounter++;
     }
     void WareHouse::simulateStep()
     {
@@ -261,11 +261,17 @@ using namespace std;
                 {
                     if (id == inProcessOrders[i]->getId())
                     {
-                        if (volunteer->isCollector())
+                        if (volunteer->isCollector()){
                             pendingOrders.push_back(inProcessOrders[i]);
-                        else
+                            inProcessOrders[i]->setCollectorId(NO_VOLUNTEER);
+                        }
+                        else{
                             completedOrders.push_back(inProcessOrders[i]);
+                            inProcessOrders[i]->setDriverId(NO_VOLUNTEER);
+                            inProcessOrders[i]->advanceStatus();
+                        }
                         inProcessOrders.erase(inProcessOrders.begin() + i);
+                        volunteer->resetCompletedOrderId();
                         i--;
                     }
                 }
@@ -405,9 +411,9 @@ using namespace std;
             if (Customer->getId() == id)
             {
                 find = true;
-                vector<int> &ordersId = Customer->getOrdersId();
+                const vector<int> &ordersId = Customer->getOrdersId();
                 auto vectors = {pendingOrders, inProcessOrders, completedOrders};
-                for (int &ID : ordersId)
+                for (const int &ID : ordersId)
                 {
                     res += "OrderID: " + std::to_string(ID) + "\n";
                     for (auto vector : vectors){
@@ -415,7 +421,7 @@ using namespace std;
                         {
                             if (order->getId() == ID)
                             {
-                                res += "OrderStatus: " + orderStatusToString(order->getStatus()) + "\n";
+                                res += "OrderStatus: " + order->getStringStatus() + "\n";
                             }
                         }
                     }
@@ -446,19 +452,4 @@ using namespace std;
             res += action->toString() + "\n";
         }
         return res;
-    }
-    string WareHouse::orderStatusToString(OrderStatus status){
-        switch ((int)status)
-        {
-        case 0:
-            return "Pending";
-        case 1:
-            return "Collecting";
-        case 2:
-            return "Delivering";
-        case 3:
-            return "Completed";
-        default:
-            return "";
-        }
     }
