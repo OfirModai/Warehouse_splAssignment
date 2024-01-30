@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "cwd": "${workspaceFolder}",
             "request": "launch",
-            "program": "${workspaceFolder}/app",
+            "program": "${workspaceFolder}/bin/warehouse",
             "MIMode": "gdb",
             "args": ["configFileExample2.txt"],
             "setupCommands": [

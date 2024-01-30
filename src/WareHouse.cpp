@@ -138,7 +138,7 @@ using namespace std;
     void WareHouse::open()
     {
         std::string input;
-        while (input != "7" & input != "9")
+        while (input != "7")
         {
             cout<<"You may enter action as described: "<< std::endl;
             std::getline(std::cin, input);
@@ -185,6 +185,7 @@ using namespace std;
                 cout << order->toString_close() << std::endl;
             }
         }
+        isOpen = false;
     }
     
     string WareHouse::addOrder(int customerId)

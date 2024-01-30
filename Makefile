@@ -1,17 +1,19 @@
 CC=g++
-CFLAGS=-g -Iinclude
+CFLAGS=-g -Wall -Weffc++ -std=c++11 -Iinclude
 DEPS = $(wildcard include/*.h)
-OBJ_DIR = obj
+OBJ_DIR = bin
 OBJ = $(patsubst src/%.cpp, $(OBJ_DIR)/%.o, $(wildcard src/*.cpp))
+EXECUTABLE = $(OBJ_DIR)/warehouse
 
-all: clean app
+all: clean $(EXECUTABLE)
 
-app: $(OBJ) 
+$(EXECUTABLE): $(OBJ) 
+	@mkdir -p $(OBJ_DIR)  # Create the bin directory if it doesn't exist
 	$(CC) -o $@ $^ $(CFLAGS)
 
 $(OBJ_DIR)/%.o: src/%.cpp $(DEPS)
-	@mkdir -p $(OBJ_DIR)  # Create the obj directory if it doesn't exist
+	@mkdir -p $(OBJ_DIR)  # Create the bin directory if it doesn't exist
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean: 
-	rm -f $(OBJ) app
+	rm -f $(OBJ) $(EXECUTABLE)

@@ -211,8 +211,6 @@ using std::vector;
         else
         {
             wareHouse = *backup;
-            //
-            //to_restore = true;
             complete();
         }
         BaseAction::act(wareHouse);
