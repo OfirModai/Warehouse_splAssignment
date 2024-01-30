@@ -204,5 +204,5 @@ void LimitedDriverVolunteer::acceptOrder(const Order &order)
 }
 string LimitedDriverVolunteer::toString() const
 {
-    return driverToString() + "\n ordersLeft: " + std::to_string(ordersLeft);
+    return driverToString() + "\nordersLeft: " + std::to_string(ordersLeft);
 }

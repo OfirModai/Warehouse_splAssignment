@@ -157,7 +157,6 @@ using namespace std;
             if (customers[i]->getId() == customerId)
                 return *customers[i];
         }
-        throw runtime_error("no such customer");
     }
     Volunteer &WareHouse::getVolunteer(int volunteerId) const
     {
@@ -166,7 +165,6 @@ using namespace std;
             if (volunteers[i]->getId() == volunteerId)
                 return *volunteers[i];
         }
-        throw runtime_error("no such volunteer");
     }
     Order &WareHouse::getOrder(int orderId) const
     {
@@ -177,7 +175,6 @@ using namespace std;
                 if (order->getId() == orderId) return *order;
             }
         }
-        throw runtime_error("no such order");
     }
     void WareHouse::close()
     {
@@ -188,7 +185,6 @@ using namespace std;
                 cout << order->toString_close() << std::endl;
             }
         }
-        delete this; // what happens??
     }
     
     string WareHouse::addOrder(int customerId)

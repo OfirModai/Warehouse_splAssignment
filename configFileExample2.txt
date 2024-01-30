@@ -1,1 +1,3 @@
-customer Moshe soldier 3 2
+customer Moshe soldier 3 3 # to be changed to 2
+volunteer Ron limited_collector 3 3
+volunteer Din limited_driver 3 2 3

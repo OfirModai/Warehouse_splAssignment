@@ -1,14 +1,16 @@
 CC=g++
-CFLAGS=-g -Iinclude  
+CFLAGS=-g -Iinclude
 DEPS = $(wildcard include/*.h)
-OBJ = $(patsubst src/%.cpp, %.o, $(wildcard src/*.cpp))
+OBJ_DIR = obj
+OBJ = $(patsubst src/%.cpp, $(OBJ_DIR)/%.o, $(wildcard src/*.cpp))
 
 all: clean app
 
 app: $(OBJ) 
 	$(CC) -o $@ $^ $(CFLAGS)
-	
-%.o: src/%.cpp $(DEPS)
+
+$(OBJ_DIR)/%.o: src/%.cpp $(DEPS)
+	@mkdir -p $(OBJ_DIR)  # Create the obj directory if it doesn't exist
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean: 

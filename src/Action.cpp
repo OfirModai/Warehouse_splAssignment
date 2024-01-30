@@ -210,7 +210,9 @@ using std::vector;
         }
         else
         {
-            to_restore = true;
+            wareHouse = *backup;
+            //
+            //to_restore = true;
             complete();
         }
         BaseAction::act(wareHouse);
