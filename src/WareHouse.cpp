@@ -102,6 +102,11 @@ using namespace std;
     {
         if (this == &other)
             return *this;
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+
         actionsLog.clear();
         volunteers.clear();
         pendingOrders.clear();
@@ -164,7 +169,6 @@ using namespace std;
                 if (order->getId() == orderId) return *order;
             }
         }
-        return -1;
     }
     void WareHouse::close()
     {
