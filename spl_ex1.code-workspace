@@ -50,6 +50,13 @@
 			"stdexcept": "cpp",
 			"streambuf": "cpp",
 			"typeinfo": "cpp"
-		}
+		},
+		"makefile.launchConfigurations": [
+			{
+				"cwd": "/home/users/bsc/modai/Documents/spl_ex1/bin",
+				"binaryPath": "/home/users/bsc/modai/Documents/spl_ex1/bin/warehouse",
+				"binaryArgs": []
+			}
+		]
 	}
 }
