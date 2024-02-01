@@ -1,10 +1,10 @@
 #pragma once
-#include "../include/WareHouse.h"
+#include "WareHouse.h"
 #include <iostream>
 
 using namespace std;
+class WareHouse;
 
 extern WareHouse *backup;
-extern bool to_restore;
 
 int main(int argc, char **argv);

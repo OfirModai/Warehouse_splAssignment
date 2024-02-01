@@ -1,11 +1,4 @@
-#pragma once
-#include <string>
-#include <vector>
-#include "../include/WareHouse.h"
-#include "../include/main.h"
 #include "../include/Action.h"
-using std::string;
-using std::vector;
 
     ActionStatus BaseAction::getStatus() const { return status; };
     BaseAction::BaseAction() : errorMsg("didn't act yet"), status(ActionStatus::ERROR) {}
@@ -50,7 +43,7 @@ using std::vector;
     SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {}
     void SimulateStep::act(WareHouse &warehouse)
     {
-        for (size_t i = 0; i < numOfSteps; i++)
+        for (int i = 0; i < numOfSteps; i++)
             warehouse.simulateStep();
         complete();
         BaseAction::act(warehouse);
@@ -202,7 +195,7 @@ using std::vector;
         complete();
         BaseAction::act(wareHouse);
     }
-    BackupWareHouse *BackupWareHouse::clone() const 
+    BackupWareHouse *BackupWareHouse::clone() const
     {
         return new BackupWareHouse(*this);
     }

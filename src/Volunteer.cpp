@@ -1,11 +1,4 @@
-#pragma once
-#include <string>
-#include <vector>
-#include "../include/Order.h"
 #include "../include/Volunteer.h"
-#include <stdexcept>
-using std::string;
-using std::vector;
 
 Volunteer::Volunteer(int id, const string &name)
     : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}

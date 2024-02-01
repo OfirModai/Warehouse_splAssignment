@@ -1,18 +1,4 @@
-#pragma once
-#include <string>
-#include <vector>
-using namespace std;
-
-#include "../include/Order.h"
-#include "../include/Customer.h"
-#include "../include/Volunteer.h"
-#include "../include/Action.h"
 #include "../include/WareHouse.h"
-
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <tuple>
 
     WareHouse::WareHouse(const string &configFilePath)
         : isOpen(false), customerCounter(0), volunteerCounter(0), orderCounter(0)
@@ -151,6 +137,8 @@ using namespace std;
             if (customers[i]->getId() == customerId)
                 return *customers[i];
         }
+        Customer* res = nullptr;
+        return *res;
     }
     Volunteer &WareHouse::getVolunteer(int volunteerId) const
     {
@@ -159,6 +147,8 @@ using namespace std;
             if (volunteers[i]->getId() == volunteerId)
                 return *volunteers[i];
         }
+        Volunteer* res = nullptr;
+        return *res;
     }
     Order &WareHouse::getOrder(int orderId) const
     {
@@ -169,6 +159,8 @@ using namespace std;
                 if (order->getId() == orderId) return *order;
             }
         }
+        Order* res = nullptr;
+        return *res;
     }
     void WareHouse::close()
     {

@@ -11,6 +11,7 @@ using namespace std;
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <tuple>
 
 class BaseAction;
 class Volunteer;
@@ -56,6 +57,10 @@ private:
     int customerCounter;  // For assigning unique customer IDs
     int volunteerCounter; // For assigning unique volunteer IDs
     
+    static Order* defaultOrder;
+    static Customer* defaultCustomer;
+    static Volunteer* defaultVolunteer;
+
     void deleteVectors();
     void assignVectors(const WareHouse &other);
     void makeActionByString(string& input);
