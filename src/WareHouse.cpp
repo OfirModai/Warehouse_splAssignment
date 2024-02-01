@@ -1,8 +1,10 @@
 #include "../include/WareHouse.h"
 
     WareHouse::WareHouse(const string &configFilePath)
-        : isOpen(false), customerCounter(0), volunteerCounter(0), orderCounter(0)
+        : isOpen(false), customerCounter(0), volunteerCounter(0), orderCounter(0),
+         actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers()
     {
+        
         // Open the text file
         std::ifstream inputFile(configFilePath);
         // Check if the file is open
@@ -64,8 +66,16 @@
         inputFile.close();
     }
     WareHouse::WareHouse(const WareHouse &other)
-        : isOpen(other.isOpen), customerCounter(other.customerCounter),
-          volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter)
+        : isOpen(other.isOpen),
+        customerCounter(other.customerCounter),
+        volunteerCounter(other.volunteerCounter),
+        orderCounter(other.orderCounter),
+        actionsLog(),
+        volunteers(),
+        pendingOrders(),
+        inProcessOrders(),
+        completedOrders(),
+        customers()
     {
         assignVectors(other);
     }
@@ -106,6 +116,7 @@
         inProcessOrders = std::move(other.inProcessOrders);
         completedOrders = std::move(other.completedOrders);
         customers = std::move(other.customers);
+        return *this;
     }
     WareHouse::~WareHouse() { deleteVectors(); }
 
@@ -132,7 +143,7 @@
     }
     Customer &WareHouse::getCustomer(int customerId) const
     {
-        for (int i = 0; i < customers.size(); i++)
+        for (size_t i = 0; i < customers.size(); i++)
         {
             if (customers[i]->getId() == customerId)
                 return *customers[i];
@@ -142,7 +153,7 @@
     }
     Volunteer &WareHouse::getVolunteer(int volunteerId) const
     {
-        for (int i = 0; i < volunteers.size(); i++)
+        for (size_t i = 0; i < volunteers.size(); i++)
         {
             if (volunteers[i]->getId() == volunteerId)
                 return *volunteers[i];
@@ -176,7 +187,7 @@
     
     string WareHouse::addOrder(int customerId)
     {
-        int i;
+        size_t i;
         for (i = 0; i < customers.size(); i++)
         {
             if (customers[i]->getId() == customerId)
@@ -204,7 +215,7 @@
     void WareHouse::simulateStep()
     {
         // stage 1
-        for (int i = 0; i < pendingOrders.size(); i++)
+        for (size_t i = 0; i < pendingOrders.size(); i++)
         {
             Order *order_i = pendingOrders[i];
             for (Volunteer *volunteer : volunteers)
@@ -226,7 +237,7 @@
             }
         }
         // stage 2
-        for (int i = 0; i < volunteers.size(); i++)
+        for (size_t i = 0; i < volunteers.size(); i++)
         {
             volunteers[i]->step();
         }
@@ -237,7 +248,7 @@
             int id = volunteer->getCompletedOrderId();
             if (id != NO_ORDER)
             {
-                for (int i = 0; i < inProcessOrders.size(); i++)
+                for (size_t i = 0; i < inProcessOrders.size(); i++)
                 {
                     if (id == inProcessOrders[i]->getId())
                     {
@@ -257,9 +268,9 @@
         }
 
         // stage 4
-        for (int i = 0; i < volunteers.size(); i++)
+        for (size_t i = 0; i < volunteers.size(); i++)
         {
-            if (!volunteers[i]->hasOrdersLeft() & volunteers[i]->getActiveOrderId() == NO_ORDER)
+            if ((!volunteers[i]->hasOrdersLeft()) & (volunteers[i]->getActiveOrderId() == NO_ORDER))
             {
                 volunteers.erase(volunteers.begin() + i);
                 i--;
@@ -370,9 +381,6 @@
             return;
         }
         action->act(*this);
-        if(typeid(action) == typeid(Close)){
-            // close is the only object which doesn't get deleted beacuse it 
-        }
     }
 
     string WareHouse::getOrderStatus(int id)

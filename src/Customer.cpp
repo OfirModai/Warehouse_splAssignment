@@ -20,17 +20,14 @@ bool Customer::canMakeOrder() const
 };
 int Customer::addOrder(int orderId)
 {
-    if (canMakeOrder())
+    if (canMakeOrder()){
         ordersId.push_back(orderId);
         return orderId;
+    }
     return -1;
 }
 
-const vector<int> &Customer::getOrdersId() const
-{
-    static vector<int> ref_ordersId = ordersId;
-    return ref_ordersId;
-}
+const vector<int> &Customer::getOrdersId() const{return ordersId;}
 
 Customer::~Customer(){};
 

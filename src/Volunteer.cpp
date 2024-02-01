@@ -1,7 +1,7 @@
 #include "../include/Volunteer.h"
 
 Volunteer::Volunteer(int id, const string &name)
-    : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
+    :completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(id), name(name) {}
 int Volunteer::getId() const { return id; };
 const string &Volunteer::getName() const
 {
@@ -66,7 +66,7 @@ bool CollectorVolunteer::decreaseCoolDown()
 bool CollectorVolunteer::hasOrdersLeft() const { return true; }
 bool CollectorVolunteer::canTakeOrder(const Order &order) const
 {
-    return activeOrderId == NO_ORDER & order.getStatus() == OrderStatus::PENDING;
+    return ((activeOrderId == NO_ORDER) & (order.getStatus() == OrderStatus::PENDING));
 }
 void CollectorVolunteer::acceptOrder(const Order &order)
 {
@@ -138,8 +138,8 @@ bool DriverVolunteer::decreaseDistanceLeft()
 bool DriverVolunteer::hasOrdersLeft() const { return true; }
 bool DriverVolunteer::canTakeOrder(const Order &order) const
 {
-    return (activeOrderId == NO_ORDER & order.getDistance() <= maxDistance &
-            order.getStatus() == OrderStatus::COLLECTING);
+    return ((activeOrderId == NO_ORDER) & (order.getDistance() <= maxDistance) &
+            (order.getStatus() == OrderStatus::COLLECTING));
 }
 void DriverVolunteer::acceptOrder(const Order &order)
 {

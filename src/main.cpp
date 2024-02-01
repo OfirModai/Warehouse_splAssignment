@@ -1,7 +1,6 @@
 #include "../include/main.h"
 
 WareHouse *backup = nullptr;
-bool to_restore = false;
 
 int main(int argc, char **argv)
 {
@@ -13,13 +12,7 @@ int main(int argc, char **argv)
     string configurationFile = argv[1];
     WareHouse *wareHouse = new WareHouse(configurationFile);
     wareHouse->start();
-
-    while (to_restore)
-    {
-        *wareHouse = *backup;
-        to_restore = false;
-        wareHouse->open();
-    }
+    
     // make sure to delete warehouse objects
     if (backup != nullptr)
     {

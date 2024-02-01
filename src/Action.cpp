@@ -112,7 +112,7 @@
     }
     string PrintOrderStatus::toString() const 
     {
-        return "orderStatus: " + orderId + BaseAction::toString();
+        return "orderStatus " + std::to_string(orderId)+ " " + BaseAction::toString();
     }
 
 
@@ -133,7 +133,7 @@
     }
     string PrintCustomerStatus::toString() const 
     {
-        return "customerStatus: "+ customerId + BaseAction::toString();
+        return "customerStatus " + std::to_string(customerId) + " " + BaseAction::toString();
     }
 
     PrintVolunteerStatus::PrintVolunteerStatus(int id) : VolunteerId(id) {}
@@ -153,7 +153,7 @@
     }
     string PrintVolunteerStatus::toString() const 
     {
-        return "volunteerStatus "+ VolunteerId + BaseAction::toString();
+        return "volunteerStatus " + std::to_string(VolunteerId) + " " + BaseAction::toString();
     }
 
     PrintActionsLog::PrintActionsLog(){};
@@ -170,7 +170,7 @@
     }
     string PrintActionsLog::toString() const 
     {
-        return "log: " + BaseAction::toString();
+        return "log " + BaseAction::toString();
     }
 
 

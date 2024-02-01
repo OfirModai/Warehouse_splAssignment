@@ -44,22 +44,18 @@ public:
     void simulateStep();
     string getVolunteerStatus(int id);
     string getActionsLog();
-    int orderCounter;
 
 private:
     bool isOpen;
+    int customerCounter;  // For assigning unique customer IDs
+    int volunteerCounter; // For assigning unique volunteer IDs
+    int orderCounter;
     vector<BaseAction *> actionsLog;
     vector<Volunteer *> volunteers;
     vector<Order *> pendingOrders;
     vector<Order *> inProcessOrders;
     vector<Order *> completedOrders;
     vector<Customer *> customers;
-    int customerCounter;  // For assigning unique customer IDs
-    int volunteerCounter; // For assigning unique volunteer IDs
-    
-    static Order* defaultOrder;
-    static Customer* defaultCustomer;
-    static Volunteer* defaultVolunteer;
 
     void deleteVectors();
     void assignVectors(const WareHouse &other);
